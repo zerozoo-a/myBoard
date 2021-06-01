@@ -1,7 +1,7 @@
 import React, { useState } from 'react';
 import { authService } from '../myBase';
-import Button from '@material-ui/core/Button';
 import SignIn from './SignIn';
+import SnsSignInModal from './SnsSignInModal';
 
 // setIsLoggedIn = > redux store()
 export default function Auth({ setIsLoggedIn }) {
@@ -49,10 +49,7 @@ export default function Auth({ setIsLoggedIn }) {
         <input type='submit' value='Log In'></input>
       </form>
       <SignIn />
-
-      <Button size='small' variant='contained' color='primary'>
-        SNS 로그인
-      </Button>
+      <SnsSignInModal />
     </div>
   );
 }
