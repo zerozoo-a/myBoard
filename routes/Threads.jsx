@@ -34,8 +34,6 @@ export default function Threads({ userObj }) {
       user: userObj.uid,
     });
   };
-  console.log('userObj: ', userObj);
-  console.log('threads: ', threads);
 
   return (
     <div>
