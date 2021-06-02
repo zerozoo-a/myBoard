@@ -5,8 +5,8 @@ import SnsSignInModal from './SnsSignInModal';
 
 // setIsLoggedIn = > redux store()
 export default function Auth({ setIsLoggedIn }) {
-  const [email, setEmail] = useState(null);
-  const [password, setPassword] = useState(null);
+  const [email, setEmail] = useState('');
+  const [password, setPassword] = useState('');
   const onChange = (e) => {
     const value = e.target.value;
     const name = e.target.name;
@@ -17,12 +17,11 @@ export default function Auth({ setIsLoggedIn }) {
     }
   };
 
-  const onSubmit = async (e) => {
-    e.preventDefault();
+  const onSubmit = async (event) => {
+    event.preventDefault();
     try {
       let data;
       data = await authService.signInWithEmailAndPassword(email, password);
-      alert('로그인 성공!');
       setIsLoggedIn(true);
     } catch (error) {
       alert('error occurred!', error);
@@ -48,8 +47,8 @@ export default function Auth({ setIsLoggedIn }) {
           required></input>
         <input type='submit' value='Log In'></input>
       </form>
-      <SignIn />
-      <SnsSignInModal />
+      <SignIn setIsLoggedIn={setIsLoggedIn} />
+      <SnsSignInModal setIsLoggedIn={setIsLoggedIn} />
     </div>
   );
 }

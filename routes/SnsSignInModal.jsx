@@ -1,9 +1,14 @@
-import React from 'react';
+import React, { useState } from 'react';
 import { makeStyles } from '@material-ui/core/styles';
 import Button from '@material-ui/core/Button';
 import Modal from '@material-ui/core/Modal';
 import { authService, getFirebaseAuth } from '../myBase';
 import styled from 'styled-components';
+
+// authService = firebase.auth() => signInWithEmailAndPassword(email,pwd)
+// getFirebaseAuth = firebase.auth => sns logIn(provider)
+// todo:
+// #1 isLoggedIn, setIsLoggedIn => redux
 
 const SnsStyle = styled.div`
   li {
@@ -36,7 +41,7 @@ const useStyles = makeStyles((theme) => ({
   },
 }));
 
-export default function SnsSignInModal() {
+export default function SnsSignInModal({ setIsLoggedIn }) {
   const classes = useStyles();
   const [modalStyle] = React.useState(getModalStyle);
   const [open, setOpen] = React.useState(false);
@@ -56,13 +61,19 @@ export default function SnsSignInModal() {
 
   const onSnsClick = async (snsName) => {
     let provider = null;
-    if (sns.google === snsName) {
-      provider = new getFirebaseAuth.GoogleAuthProvider();
-    } else if (sns.github === snsName) {
-      provider = new getFirebaseAuth.GithubAuthProvider();
+    try {
+      if (sns.google === snsName) {
+        provider = new getFirebaseAuth.GoogleAuthProvider();
+      } else if (sns.github === snsName) {
+        provider = new getFirebaseAuth.GithubAuthProvider();
+      }
+      await authService.signInWithPopup(provider);
+      console.log('sns logIn success');
+      setIsLoggedIn(true);
+    } catch (error) {
+      console.log('error is occurred!');
+      console.log(error);
     }
-    console.log(provider);
-    await authService.signInWithPopup(provider);
   };
 
   const body = (

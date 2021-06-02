@@ -4,20 +4,20 @@ import { authService } from './myBase';
 import Auth from './routes/Auth';
 import Home from './routes/Home';
 
-const AppRouter = ({ isLoggedIn }) => {
+const AppRouter = ({ setIsLoggedIn, isLoggedIn, userObj }) => {
   return (
     <Router>
       <Switch>
         {isLoggedIn ? (
           <>
             <Route exact path='/'>
-              <Home />
+              <Home userObj={userObj} />
             </Route>
           </>
         ) : (
           <>
             <Route exact path='/'>
-              <Auth />
+              <Auth setIsLoggedIn={setIsLoggedIn} />
             </Route>
           </>
         )}

@@ -26,7 +26,7 @@ const useStyles = makeStyles((theme) => ({
   },
 }));
 
-export default function SignIn() {
+export default function SignIn({ setIsLoggedIn }) {
   const classes = useStyles();
   const [modalStyle] = React.useState(getModalStyle);
   const [open, setOpen] = React.useState(false);
@@ -50,8 +50,10 @@ export default function SignIn() {
       let data;
       data = await authService.createUserWithEmailAndPassword(email, password);
       alert('회원가입 성공! 🥳🎉');
+      setIsLoggedIn(true);
       handleClose();
     } catch (error) {
+      console.log(error);
       setErrorMsg(error);
       if (error.code === 'auth/invalid-email') {
         alert('잘못된 이메일 형식입니다. 😰', errorMsg);

@@ -5,20 +5,28 @@ import 'firebase/auth';
 
 // const auth = new firebase.auth.GoogleAuthProvider();
 
-console.log('firebase: ', authService);
+// userObj === now logged in user
 const App = () => {
   const [isLoggedIn, setIsLoggedIn] = useState(false);
+  const [userObj, setUserObj] = useState(null);
   useEffect(() => {
     authService.onAuthStateChanged((user) => {
       if (user) {
-        isLoggedIn(true);
+        setIsLoggedIn(true);
+        setUserObj(user);
+      } else {
+        setIsLoggedIn(false);
       }
       return;
     });
   }, []);
   return (
     <div>
-      <AppRouter isLoggedIn={isLoggedIn} />
+      <AppRouter
+        setIsLoggedIn={setIsLoggedIn}
+        isLoggedIn={isLoggedIn}
+        userObj={userObj}
+      />
     </div>
   );
 };
