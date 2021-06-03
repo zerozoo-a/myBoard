@@ -3,9 +3,8 @@ import { fireDB as db } from '../myBase';
 import Button from '@material-ui/core/Button';
 import { makeStyles } from '@material-ui/styles';
 import IconButton from '@material-ui/core/IconButton';
-import { Delete, Edit, AddAPhoto } from '@material-ui/icons';
-
-import UploadBtn from './UploadBtn';
+import { Delete, Edit } from '@material-ui/icons';
+import UploadImageBtn from './UploadImageBtn';
 
 const useStyles = makeStyles(() => ({
   root: {
@@ -13,12 +12,26 @@ const useStyles = makeStyles(() => ({
       margin: '0.5px',
     },
   },
+  image: {
+    '&': {
+      width: '200px',
+    },
+  },
 }));
 
-export const DisplayThread = ({ thread, userObj, isOwner }) => {
+export const DisplayThread = ({
+  thread,
+  userObj,
+  isOwner,
+  imageDownloadUrls,
+  setImageDownloadUrls,
+  imageFileUrls,
+  setImageFileUrls,
+}) => {
   const [isEditOn, setIsEditOn] = useState(false);
   const [editThreadValue, setEditThreadValue] = useState(thread.data);
   const classes = useStyles();
+  const normalAlt = 'this is user image';
 
   const deleteThread = () => {
     const askDelete = window.confirm(
@@ -39,11 +52,25 @@ export const DisplayThread = ({ thread, userObj, isOwner }) => {
 
   const onSubmit = (event) => {
     event.preventDefault();
-    db.collection('Thread').doc(thread.id).update({ data: editThreadValue });
+    db.collection('Thread').doc(thread.id).update({
+      data: editThreadValue,
+      imageUrl: imageDownloadUrls,
+      edited: Date.now(),
+    });
+    setIsEditOn(false);
   };
   return (
     <div>
-      <div>{thread.data}</div>
+      <div>
+        {thread.imageUrl.length !== 0 ? (
+          <img
+            className={classes.image}
+            alt={`${userObj}'s image`}
+            src={thread.imageUrl}
+          />
+        ) : null}
+        <div>{thread.data}</div>
+      </div>
       {isOwner ? (
         <div>
           <IconButton
@@ -72,7 +99,6 @@ export const DisplayThread = ({ thread, userObj, isOwner }) => {
               </IconButton>
             </>
           )}
-          <UploadBtn />
 
           {isEditOn ? (
             <>
@@ -81,6 +107,25 @@ export const DisplayThread = ({ thread, userObj, isOwner }) => {
                   onChange={onChange}
                   type='text'
                   value={editThreadValue}
+                />
+                <div>
+                  {imageDownloadUrls === undefined ? null : (
+                    <div>
+                      <img
+                        className={classes.image}
+                        alt={normalAlt}
+                        src={imageDownloadUrls}
+                      />
+                    </div>
+                  )}
+                </div>
+
+                <UploadImageBtn
+                  imageFileUrls={imageFileUrls}
+                  imageDownloadUrls={imageDownloadUrls}
+                  setImageFileUrls={setImageFileUrls}
+                  setImageDownloadUrls={setImageDownloadUrls}
+                  userObj={userObj}
                 />
                 <Button type='submit' size='small'>
                   commit

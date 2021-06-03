@@ -1,11 +1,15 @@
 import React, { useState, useEffect } from 'react';
 import { fireDB as db } from '../myBase';
-import { authService as info } from '../myBase';
 import { DisplayThread } from './DisplayThread';
+import UploadImageBtn from './UploadImageBtn';
+import Button from '@material-ui/core/Button';
 
 export default function Threads({ userObj }) {
   const [thread, setThread] = useState('');
   const [threads, setThreads] = useState([]);
+  const [imageFileUrls, setImageFileUrls] = useState();
+  const [imageDownloadUrls, setImageDownloadUrls] = useState();
+
   const date = new Date();
   const year = date.getFullYear();
   const month = date.getMonth();
@@ -32,37 +36,52 @@ export default function Threads({ userObj }) {
       data: thread,
       createdAt: `📅 ${year}/${month}/${day} `,
       user: userObj.uid,
+      imageUrl: imageDownloadUrls,
     });
+    setThread('');
+    setImageDownloadUrls(undefined);
   };
 
   return (
     <div>
-      <div>
-        <ol>
-          <div>
-            <h4> {ThreadsTitle}</h4>
-            <div>
-              {threads.map((thread, i) => (
-                <DisplayThread
-                  key={thread.id}
-                  thread={thread}
-                  userObj={userObj}
-                  isOwner={userObj.uid === thread.user}
-                />
-              ))}
-            </div>
-          </div>
-        </ol>
-      </div>
+      <ol>
+        <h4> {ThreadsTitle}</h4>
+        <div>
+          {threads.map((thread, i) => (
+            <DisplayThread
+              key={thread.id}
+              thread={thread}
+              userObj={userObj}
+              isOwner={userObj.uid === thread.user}
+              imageDownloadUrls={imageDownloadUrls}
+              setImageDownloadUrls={setImageDownloadUrls}
+              imageFileUrls={imageFileUrls}
+              setImageFileUrls={setImageFileUrls}
+            />
+          ))}
+        </div>
+      </ol>
       <div>
         <form onSubmit={onSubmit}>
+          <UploadImageBtn
+            imageFileUrls={imageFileUrls}
+            setImageFileUrls={setImageFileUrls}
+            imageDownloadUrls={imageDownloadUrls}
+            setImageDownloadUrls={setImageDownloadUrls}
+            userObj={userObj}
+          />
+
           <input
             onChange={onChange}
             type='text'
             placeholder="What's happening?"
+            required
             value={thread}
+            maxLength='80'
             name='inputThread'></input>
-          <input type='submit' value='submit' name='submit' />
+          <Button type='submit' id='submit' name='submit'>
+            submit
+          </Button>
         </form>
       </div>
     </div>
