@@ -1,11 +1,11 @@
 import React, { useState } from 'react';
 import { fireDB as db } from '../myBase';
-
 import Button from '@material-ui/core/Button';
 import { makeStyles } from '@material-ui/styles';
 import IconButton from '@material-ui/core/IconButton';
-import DeleteIcon from '@material-ui/icons/Delete';
-import EditIcon from '@material-ui/icons/Edit';
+import { Delete, Edit, AddAPhoto } from '@material-ui/icons';
+
+import UploadBtn from './UploadBtn';
 
 const useStyles = makeStyles(() => ({
   root: {
@@ -41,20 +41,16 @@ export const DisplayThread = ({ thread, userObj, isOwner }) => {
     event.preventDefault();
     db.collection('Thread').doc(thread.id).update({ data: editThreadValue });
   };
-
   return (
     <div>
-      <div>
-        <span></span>
-        {thread.data}
-      </div>
+      <div>{thread.data}</div>
       {isOwner ? (
         <div>
           <IconButton
             onClick={deleteThread}
             className={classes.root}
             aria-label='delete'>
-            <DeleteIcon />
+            <Delete />
           </IconButton>
           {isEditOn ? (
             <>
@@ -63,7 +59,7 @@ export const DisplayThread = ({ thread, userObj, isOwner }) => {
                 onClick={editThread}
                 className={classes.root}
                 aria-label='edit'>
-                <EditIcon />
+                <Edit />
               </IconButton>
             </>
           ) : (
@@ -72,10 +68,11 @@ export const DisplayThread = ({ thread, userObj, isOwner }) => {
                 onClick={editThread}
                 className={classes.root}
                 aria-label='edit'>
-                <EditIcon />
+                <Edit />
               </IconButton>
             </>
           )}
+          <UploadBtn />
 
           {isEditOn ? (
             <>
