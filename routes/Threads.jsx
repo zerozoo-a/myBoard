@@ -3,11 +3,11 @@ import { fireDB as db } from '../myBase';
 import { DisplayThread } from './DisplayThread';
 import UploadImageBtn from './UploadImageBtn';
 import Button from '@material-ui/core/Button';
+import styled from 'styled-components';
 
 export default function Threads({ userObj }) {
   const [thread, setThread] = useState('');
   const [threads, setThreads] = useState([]);
-  const [imageFileUrls, setImageFileUrls] = useState();
   const [imageDownloadUrls, setImageDownloadUrls] = useState();
 
   const date = new Date();
@@ -15,6 +15,7 @@ export default function Threads({ userObj }) {
   const month = date.getMonth();
   const day = date.getDay();
   const ThreadsTitle = 'welcome to Thread list';
+  const imgAlt = 'user uploading image';
 
   useEffect(() => {
     db.collection('Thread').onSnapshot((snapShot) => {
@@ -36,7 +37,7 @@ export default function Threads({ userObj }) {
       data: thread,
       createdAt: `📅 ${year}/${month}/${day} `,
       user: userObj.uid,
-      imageUrl: imageDownloadUrls,
+      imageUrl: imageDownloadUrls ? imageDownloadUrls : null,
     });
     setThread('');
     setImageDownloadUrls(undefined);
@@ -55,8 +56,6 @@ export default function Threads({ userObj }) {
               isOwner={userObj.uid === thread.user}
               imageDownloadUrls={imageDownloadUrls}
               setImageDownloadUrls={setImageDownloadUrls}
-              imageFileUrls={imageFileUrls}
-              setImageFileUrls={setImageFileUrls}
             />
           ))}
         </div>
@@ -64,8 +63,6 @@ export default function Threads({ userObj }) {
       <div>
         <form onSubmit={onSubmit}>
           <UploadImageBtn
-            imageFileUrls={imageFileUrls}
-            setImageFileUrls={setImageFileUrls}
             imageDownloadUrls={imageDownloadUrls}
             setImageDownloadUrls={setImageDownloadUrls}
             userObj={userObj}

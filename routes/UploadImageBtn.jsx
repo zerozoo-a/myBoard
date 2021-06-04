@@ -3,7 +3,6 @@ import { AddAPhoto } from '@material-ui/icons';
 import { makeStyles } from '@material-ui/styles';
 import IconButton from '@material-ui/core/IconButton';
 import ClearIcon from '@material-ui/icons/Clear';
-import { cloneDeep } from 'lodash';
 import { fireStorage } from '../myBase';
 import { v4 as uuidv4 } from 'uuid';
 
@@ -26,11 +25,10 @@ const useStyles = makeStyles(() => ({
 }));
 
 export default function UploadImageBtn({
-  imageFileUrls,
   imageDownloadUrls,
-  setImageFileUrls,
   setImageDownloadUrls,
   userObj,
+  setNewProfilePhoto,
 }) {
   const [previewImage, setPreviewImage] = useState(undefined);
   const classes = useStyles();
@@ -40,38 +38,51 @@ export default function UploadImageBtn({
     const reader = new FileReader();
     reader.readAsDataURL(file);
     reader.onloadend = async (e) => {
-      const imageUrl = e.target.result;
+      const redImageUrl = e.target.result;
       const imageRef = fireStorage
         .ref()
         .child(`${userObj.uid}/${uuidv4()}/image`);
-      const response = await imageRef.putString(imageUrl, 'data_url');
+      const response = await imageRef.putString(redImageUrl, 'data_url');
       const imageDownloadUrl = await response.ref.getDownloadURL();
-      setImageDownloadUrls(imageDownloadUrl);
       setPreviewImage(imageDownloadUrl);
+
+      if (setNewProfilePhoto === undefined) {
+        setImageDownloadUrls(imageDownloadUrl);
+        return;
+      } else {
+        setNewProfilePhoto(imageDownloadUrl);
+      }
     };
   };
+  useEffect(() => {
+    if (imageDownloadUrls === undefined) {
+      setPreviewImage(undefined);
+    }
+  }, [imageDownloadUrls]);
 
   const addImage = (event) => {
     event.preventDefault();
     const file = event.target.files[0];
     imageToRead(file);
   };
-  const exceptThisImage = (which) => {
-    let newImageArray = cloneDeep(imageFileUrls);
-    newImageArray.splice(which, 1);
-    setImageFileUrls(newImageArray);
+  const exceptThisImage = () => {
+    if (setNewProfilePhoto === undefined) {
+      setImageDownloadUrls('');
+    } else {
+      setNewProfilePhoto(undefined);
+      setPreviewImage(undefined);
+    }
   };
 
   return (
-    <>
+    <div>
       <div>
         {previewImage === undefined ? null : (
           <div>
-            <img
-              className={classes.img}
-              alt={normalAlt}
-              src={imageDownloadUrls}
-            />
+            <img className={classes.img} alt={normalAlt} src={previewImage} />
+            <IconButton onClick={exceptThisImage}>
+              <ClearIcon />
+            </IconButton>
           </div>
         )}
       </div>
@@ -86,6 +97,6 @@ export default function UploadImageBtn({
           <AddAPhoto />
         </IconButton>
       </label>
-    </>
+    </div>
   );
 }

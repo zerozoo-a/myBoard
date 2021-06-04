@@ -1,14 +1,15 @@
 import React from 'react';
 import Button from '@material-ui/core/Button';
-import { useHistory } from 'react-router';
+// import { useHistory } from 'react-router';
+import { useHistory } from 'react-router-dom';
 import { makeStyles } from '@material-ui/styles';
 import { authService } from '../myBase';
 const useStyles = makeStyles((theme) => ({
   root: {},
 }));
 export default function LogOutBtn() {
+  let history = useHistory();
   const logOut = () => {
-    console.log(history);
     authService.signOut();
     history.push('/');
   };

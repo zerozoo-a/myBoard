@@ -1,10 +1,10 @@
 import React, { useState, useEffect } from 'react';
 import { HashRouter as Router, Route, Switch } from 'react-router-dom';
-import { authService } from './myBase';
 import Auth from './routes/Auth';
 import Home from './routes/Home';
+import Profile from './routes/Profile';
 
-const AppRouter = ({ setIsLoggedIn, isLoggedIn, userObj }) => {
+const AppRouter = ({ setIsLoggedIn, isLoggedIn, userObj, userObjRefresh }) => {
   return (
     <Router>
       <Switch>
@@ -22,6 +22,15 @@ const AppRouter = ({ setIsLoggedIn, isLoggedIn, userObj }) => {
           </>
         )}
       </Switch>
+      <Route exact path='/Profile'>
+        {isLoggedIn && userObj && (
+          <Profile
+            isLoggedIn={isLoggedIn}
+            userObj={userObj}
+            userObjRefresh={userObjRefresh}
+          />
+        )}
+      </Route>
     </Router>
   );
 };

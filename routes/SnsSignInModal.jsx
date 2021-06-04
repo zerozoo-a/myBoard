@@ -5,8 +5,6 @@ import Modal from '@material-ui/core/Modal';
 import { authService, getFirebaseAuth } from '../myBase';
 import styled from 'styled-components';
 
-// authService = firebase.auth() => signInWithEmailAndPassword(email,pwd)
-// getFirebaseAuth = firebase.auth => sns logIn(provider)
 // todo:
 // #1 isLoggedIn, setIsLoggedIn => redux
 
