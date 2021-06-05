@@ -14,17 +14,23 @@ export default function Threads({ userObj }) {
   const year = date.getFullYear();
   const month = date.getMonth();
   const day = date.getDay();
+  const hours = date.getHours();
+  const minutes = date.getMinutes();
+  const seconds = date.getSeconds();
+  const metaCreatedTime = date.getTime();
   const ThreadsTitle = 'welcome to Thread list';
-  const imgAlt = 'user uploading image';
 
   useEffect(() => {
-    db.collection('Thread').onSnapshot((snapShot) => {
-      const snapShots = snapShot.docs.map((doc) => ({
-        id: doc.id,
-        ...doc.data(),
-      }));
-      setThreads(snapShots);
-    });
+    db.collection('Thread')
+      .orderBy('metaCreatedTime')
+      .onSnapshot((snapShot) => {
+        const snapShots = snapShot.docs.map((doc) => ({
+          id: doc.id,
+          ...doc.data(),
+        }));
+        console.log('snapShots', snapShots);
+        setThreads(snapShots);
+      });
   }, []);
 
   const onChange = (event) => {
@@ -35,8 +41,13 @@ export default function Threads({ userObj }) {
     event.preventDefault();
     db.collection('Thread').add({
       data: thread,
-      createdAt: `📅 ${year}/${month}/${day} `,
-      user: userObj.uid,
+      metaCreatedTime: metaCreatedTime,
+      createdAt: `
+      ⏰${hours} : ${minutes} : ${seconds} 
+      📅 ${year}/${month}/${day}
+      `,
+      // user: userObj.uid,
+      user: userObj.displayName,
       imageUrl: imageDownloadUrls ? imageDownloadUrls : null,
     });
     setThread('');

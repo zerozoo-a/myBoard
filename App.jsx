@@ -10,6 +10,7 @@ import Nav from './routes/Nav';
 const App = () => {
   const [isLoggedIn, setIsLoggedIn] = useState(false);
   const [userObj, setUserObj] = useState();
+
   useEffect(() => {
     authService.onAuthStateChanged((user) => {
       if (user) {

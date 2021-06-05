@@ -73,6 +73,8 @@ export const DisplayThread = ({
           />
         ) : null}
         <div>{thread.data}</div>
+        <div>{thread.createdAt}</div>
+        <div>{thread.user}</div>
       </div>
       {isOwner ? (
         <div>

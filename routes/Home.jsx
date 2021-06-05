@@ -7,7 +7,7 @@ export default function Home({ userObj }) {
     <div>
       <h1>HOME</h1>
       <Threads userObj={userObj} />
-      <LogOutBtn />
+      <LogOutBtn userObj={userObj} />
     </div>
   );
 }

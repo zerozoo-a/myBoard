@@ -7,10 +7,11 @@ import { authService } from '../myBase';
 const useStyles = makeStyles((theme) => ({
   root: {},
 }));
-export default function LogOutBtn() {
+export default function LogOutBtn({ userObj }) {
   let history = useHistory();
   const logOut = () => {
     authService.signOut();
+
     history.push('/');
   };
   const classes = useStyles();
