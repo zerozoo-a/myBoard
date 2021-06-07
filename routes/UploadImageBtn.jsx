@@ -28,7 +28,7 @@ export default function UploadImageBtn({
   imageDownloadUrls,
   setImageDownloadUrls,
   userObj,
-  setNewProfilePhoto,
+  setNewProfileImage,
 }) {
   const [previewImage, setPreviewImage] = useState(undefined);
   const classes = useStyles();
@@ -41,12 +41,12 @@ export default function UploadImageBtn({
       const redImageUrl = e.target.result;
       const imageRef = fireStorage
         .ref()
-        .child(`${userObj.uid}/${uuidv4()}/image`);
+        .child(`images/${userObj.uid}/${uuidv4()}/`);
       const response = await imageRef.putString(redImageUrl, 'data_url');
       const imageDownloadUrl = await response.ref.getDownloadURL();
       setPreviewImage(imageDownloadUrl);
 
-      if (setNewProfilePhoto === undefined) {
+      if (setNewProfileImage === undefined) {
         setImageDownloadUrls(imageDownloadUrl);
         return;
       } else {

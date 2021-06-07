@@ -1,8 +1,10 @@
-import React, { useState } from 'react';
+import React, { useState, useEffect } from 'react';
 import Button from '@material-ui/core/Button';
-import UploadImageBtn from './UploadImageBtn';
 import styled from 'styled-components';
-import { PhotoAlbum } from '@material-ui/icons';
+import ReturnImageUrl from './ReturnImageUrl';
+import { makeStyles } from '@material-ui/core/styles';
+import Modal from '@material-ui/core/Modal';
+import { fireStorage } from '../myBase';
 
 const EditProfileNickName = ({ userObj, userObjRefresh }) => {
   const [newNickName, setNewNickName] = useState(userObj.displayName);
@@ -34,7 +36,8 @@ const EditProfileNickName = ({ userObj, userObjRefresh }) => {
             value={newNickName}
             onChange={onChange}
             type='text'
-            maxLength='8'
+            maxLength='20'
+            required
             id='changeNickName'></input>
           <Button type='submit' id='submit' name='submit'>
             change
@@ -45,54 +48,89 @@ const EditProfileNickName = ({ userObj, userObjRefresh }) => {
   );
 };
 
-const EditUserProfileUrlStyle = styled.div`
-  img {
-    width: 150px;
-  }
-`;
-const EditProfilePhotoURL = ({ userObj, userObjRefresh }) => {
-  const [newProfilePhoto, setNewProfilePhoto] = useState();
-  const [isSubmitted, setIsSubmitted] = useState(false);
-  const userPhotoUrlAlt = 'this is user photo 🖼';
-  const onSubmit = async (event) => {
-    event.preventDefault();
-    if (userObj.photoUrl !== newProfilePhoto) {
-      await userObj.updateProfile({ photoUrl: newProfilePhoto });
-      console.log('is it works?');
-      setIsSubmitted(!isSubmitted);
-      setNewProfilePhoto();
-      userObjRefresh();
-    }
+function getModalStyle() {
+  const top = 50;
+  const left = 50;
+
+  return {
+    top: `${top}%`,
+    left: `${left}%`,
+    transform: `translate(-${top}%, -${left}%)`,
+  };
+}
+
+const useStyles = makeStyles((theme) => ({
+  paper: {
+    position: 'absolute',
+    width: 400,
+    backgroundColor: theme.palette.background.paper,
+    border: '2px solid #000',
+    boxShadow: theme.shadows[5],
+    padding: theme.spacing(2, 4, 3),
+  },
+  img: {
+    width: 150,
+  },
+}));
+
+const EditProfileImage = ({ userObj, userObjRefresh }) => {
+  const classes = useStyles();
+  const [modalStyle] = useState(getModalStyle);
+  const [open, setOpen] = useState(false);
+  const [newProfileImage, setNewProfileImage] = useState(null);
+  const userImageAlt = 'user image';
+
+  const handleOpen = () => {
+    setOpen(true);
   };
 
-  return (
-    <>
-      <div>
-        <div>you can change your photo</div>
-      </div>
-      <EditUserProfileUrlStyle>
-        {isSubmitted ? (
-          <img alt={userPhotoUrlAlt} src={newProfilePhoto} />
-        ) : (
-          <img alt={userPhotoUrlAlt} src={userObj.photoUrl} />
-        )}
-        <span> from </span>
-        <span> to </span>
+  const handleClose = () => {
+    setOpen(false);
+  };
+  const onSubmit = async (event) => {
+    event.preventDefault();
+    await userObj.updateProfile({
+      photoURL: newProfileImage,
+    });
+    userObjRefresh();
+    handleClose();
+  };
 
-        {newProfilePhoto && <img alt={userPhotoUrlAlt} src={newProfilePhoto} />}
-      </EditUserProfileUrlStyle>
-      <UploadImageBtn
-        userObj={userObj}
-        setNewProfilePhoto={setNewProfilePhoto}
-      />
+  const body = (
+    <div style={modalStyle} className={classes.paper}>
+      <h2 id='simple-modal-title'>Text in a modal</h2>
+      <img className={classes.img} alt={userImageAlt} src={userObj.photoUrl} />
+      👉
+      {newProfileImage && (
+        <img className={classes.img} alt={userImageAlt} src={newProfileImage} />
+      )}
       <form onSubmit={onSubmit}>
-        {newProfilePhoto && (
-          <Button type='submit' name='submit' id='submit'>
-            CHANGE
+        <div>
+          <ReturnImageUrl
+            userObj={userObj}
+            setNewProfileImage={setNewProfileImage}
+          />
+          <Button type='submit' id='changeUserImage'>
+            Confirm
           </Button>
-        )}
+        </div>
       </form>
-    </>
+    </div>
+  );
+
+  return (
+    <div>
+      <button type='button' onClick={handleOpen}>
+        Change your own your profile image
+      </button>
+      <Modal
+        open={open}
+        onClose={handleClose}
+        aria-labelledby='simple-modal-title'
+        aria-describedby='simple-modal-description'>
+        {body}
+      </Modal>
+    </div>
   );
 };
 
@@ -100,7 +138,7 @@ const EditProfile = ({ userObj, userObjRefresh }) => {
   return (
     <>
       <EditProfileNickName userObj={userObj} userObjRefresh={userObjRefresh} />
-      <EditProfilePhotoURL userObj={userObj} userObjRefresh={userObjRefresh} />
+      <EditProfileImage userObj={userObj} userObjRefresh={userObjRefresh} />
     </>
   );
 };

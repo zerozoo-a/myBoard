@@ -1,6 +1,5 @@
 import React from 'react';
 import Button from '@material-ui/core/Button';
-// import { useHistory } from 'react-router';
 import { useHistory } from 'react-router-dom';
 import { makeStyles } from '@material-ui/styles';
 import { authService } from '../myBase';
@@ -11,7 +10,6 @@ export default function LogOutBtn({ userObj }) {
   let history = useHistory();
   const logOut = () => {
     authService.signOut();
-
     history.push('/');
   };
   const classes = useStyles();

@@ -4,6 +4,7 @@ import { DisplayThread } from './DisplayThread';
 import UploadImageBtn from './UploadImageBtn';
 import Button from '@material-ui/core/Button';
 import styled from 'styled-components';
+import { useLocation } from 'react-router';
 
 export default function Threads({ userObj }) {
   const [thread, setThread] = useState('');
@@ -13,24 +14,28 @@ export default function Threads({ userObj }) {
   const date = new Date();
   const year = date.getFullYear();
   const month = date.getMonth();
-  const day = date.getDay();
+  const actualDate = date.getDate();
   const hours = date.getHours();
   const minutes = date.getMinutes();
   const seconds = date.getSeconds();
   const metaCreatedTime = date.getTime();
   const ThreadsTitle = 'welcome to Thread list';
+  let location = useLocation();
 
   useEffect(() => {
-    db.collection('Thread')
+    const unsubscribe = db
+      .collection('Thread')
       .orderBy('metaCreatedTime')
       .onSnapshot((snapShot) => {
         const snapShots = snapShot.docs.map((doc) => ({
           id: doc.id,
           ...doc.data(),
         }));
-        console.log('snapShots', snapShots);
         setThreads(snapShots);
       });
+    return () => {
+      unsubscribe();
+    };
   }, []);
 
   const onChange = (event) => {
@@ -43,11 +48,12 @@ export default function Threads({ userObj }) {
       data: thread,
       metaCreatedTime: metaCreatedTime,
       createdAt: `
-      ⏰${hours} : ${minutes} : ${seconds} 
-      📅 ${year}/${month}/${day}
+      ${hours} : ${minutes} : ${seconds} _
+       ${year}/${month}/${actualDate}
       `,
-      // user: userObj.uid,
+      uid: userObj.uid,
       user: userObj.displayName,
+      photoUrl: userObj.photoUrl,
       imageUrl: imageDownloadUrls ? imageDownloadUrls : null,
     });
     setThread('');
@@ -64,7 +70,7 @@ export default function Threads({ userObj }) {
               key={thread.id}
               thread={thread}
               userObj={userObj}
-              isOwner={userObj.uid === thread.user}
+              isOwner={userObj.uid === thread.uid}
               imageDownloadUrls={imageDownloadUrls}
               setImageDownloadUrls={setImageDownloadUrls}
             />

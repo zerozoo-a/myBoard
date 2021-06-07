@@ -7,6 +7,17 @@ import { Delete, Edit } from '@material-ui/icons';
 import UploadImageBtn from './UploadImageBtn';
 import styled from 'styled-components';
 
+const ThreadStyle = styled.div`
+  #threadUserPhotoUrl {
+    img {
+      position: relative;
+      top: 4rem;
+      left: -3rem;
+      width: 3rem;
+      border-radius: 50%;
+    }
+  }
+`;
 const useStyles = makeStyles(() => ({
   root: {
     '& > *': {
@@ -64,7 +75,7 @@ export const DisplayThread = ({
   };
   return (
     <div>
-      <div>
+      <ThreadStyle>
         {thread.imageUrl !== null ? (
           <img
             className={classes.image}
@@ -72,10 +83,13 @@ export const DisplayThread = ({
             src={thread.imageUrl}
           />
         ) : null}
-        <div>{thread.data}</div>
-        <div>{thread.createdAt}</div>
-        <div>{thread.user}</div>
-      </div>
+        <div id='threadUserPhotoUrl'>
+          <img src={thread.photoUrl} />
+        </div>
+        <div id='threadDate'>{thread.data}</div>
+        <div id='threadCreatedAt'>{thread.createdAt}</div>
+        <div id='threadUser'>{thread.user}</div>
+      </ThreadStyle>
       {isOwner ? (
         <div>
           <IconButton
