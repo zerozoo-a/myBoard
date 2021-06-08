@@ -3,6 +3,7 @@ import { makeStyles } from '@material-ui/core/styles';
 import Button from '@material-ui/core/Button';
 import Modal from '@material-ui/core/Modal';
 import { authService } from '../myBase';
+import unknownUserImage from '../../imgs/unknownUserIcon.png';
 
 function getModalStyle() {
   const top = 50;
@@ -26,7 +27,7 @@ const useStyles = makeStyles((theme) => ({
   },
 }));
 
-export default function SignIn({ setIsLoggedIn }) {
+export default function SignUp({ setIsLoggedIn }) {
   const classes = useStyles();
   const [modalStyle] = React.useState(getModalStyle);
   const [open, setOpen] = React.useState(false);
@@ -49,9 +50,16 @@ export default function SignIn({ setIsLoggedIn }) {
     try {
       let data;
       data = await authService.createUserWithEmailAndPassword(email, password);
+      const user = authService.currentUser;
+      user.updateProfile({
+        displayName: user.email,
+        photoURL: unknownUserImage,
+      });
+      console.log('userPhotoUrl', user.photoURL);
       alert('회원가입 성공! 🥳🎉');
       setIsLoggedIn(true);
       handleClose();
+      console.log(data);
     } catch (error) {
       console.log(error);
       setErrorMsg(error);

@@ -7,50 +7,34 @@ import DrawerMenu from './routes/DrawerMenu';
 import { ThemeProvider } from 'styled-components';
 import theme from './theme';
 
-// const auth = new firebase.auth.GoogleAuthProvider();
+// redux
+import store from './store/store';
+import { setOnline, setOffline, selectIsOnline } from './store/userReducer';
+import { useDispatch, useSelector } from 'react-redux';
 
-// userObj === now logged in user
 const App = () => {
+  let isOnline = useSelector(selectIsOnline);
+  const dispatch = useDispatch();
   const [isLoggedIn, setIsLoggedIn] = useState(false);
-  const [userObj, setUserObj] = useState();
-
   useEffect(() => {
     authService.onAuthStateChanged((user) => {
       if (user) {
         setIsLoggedIn(true);
-        setUserObj({
-          displayName: user.displayName,
-          uid: user.uid,
-          photoUrl: user.photoURL,
-          updateProfile: (args) => user.updateProfile(args),
-        });
+        dispatch(setOnline());
       } else {
         setIsLoggedIn(false);
+        dispatch(setOffline());
+        console.log('clicked logOutBtn isOnline:', isOnline);
       }
       return;
     });
   }, []);
 
-  const userObjRefresh = () => {
-    const user = authService.currentUser;
-    setUserObj({
-      displayName: user.displayName,
-      uid: user.uid,
-      photoUrl: user.photoURL,
-      updateProfile: (args) => user.updateProfile(args),
-    });
-  };
-
   return (
     <div>
       <ThemeProvider theme={theme}>
-        {isLoggedIn && userObj && <DrawerMenu children={<Nav />} />}
-        <AppRouter
-          setIsLoggedIn={setIsLoggedIn}
-          isLoggedIn={isLoggedIn}
-          userObj={userObj}
-          userObjRefresh={userObjRefresh}
-        />
+        {isOnline && <DrawerMenu children={<Nav />} />}
+        <AppRouter />
       </ThemeProvider>
     </div>
   );

@@ -1,12 +1,12 @@
 import React, { useState, useEffect } from 'react';
-import { fireDB as db } from '../myBase';
+import { authService, fireDB as db } from '../myBase';
 import { DisplayThread } from './DisplayThread';
 import UploadImageBtn from './UploadImageBtn';
 import Button from '@material-ui/core/Button';
 import styled from 'styled-components';
 import { useLocation } from 'react-router';
 
-export default function Threads({ userObj }) {
+export default function Threads() {
   const [thread, setThread] = useState('');
   const [threads, setThreads] = useState([]);
   const [imageDownloadUrls, setImageDownloadUrls] = useState();
@@ -21,6 +21,7 @@ export default function Threads({ userObj }) {
   const metaCreatedTime = date.getTime();
   const ThreadsTitle = 'welcome to Thread list';
   let location = useLocation();
+  const user = authService.currentUser;
 
   useEffect(() => {
     const unsubscribe = db
@@ -51,9 +52,9 @@ export default function Threads({ userObj }) {
       ${hours} : ${minutes} : ${seconds} _
        ${year}/${month}/${actualDate}
       `,
-      uid: userObj.uid,
-      user: userObj.displayName,
-      photoUrl: userObj.photoUrl,
+      uid: user.uid,
+      user: user.displayName,
+      photoUrl: user.photoURL,
       imageUrl: imageDownloadUrls ? imageDownloadUrls : null,
     });
     setThread('');
@@ -69,8 +70,7 @@ export default function Threads({ userObj }) {
             <DisplayThread
               key={thread.id}
               thread={thread}
-              userObj={userObj}
-              isOwner={userObj.uid === thread.uid}
+              isOwner={user.uid === thread.uid}
               imageDownloadUrls={imageDownloadUrls}
               setImageDownloadUrls={setImageDownloadUrls}
             />
@@ -82,7 +82,6 @@ export default function Threads({ userObj }) {
           <UploadImageBtn
             imageDownloadUrls={imageDownloadUrls}
             setImageDownloadUrls={setImageDownloadUrls}
-            userObj={userObj}
           />
 
           <input

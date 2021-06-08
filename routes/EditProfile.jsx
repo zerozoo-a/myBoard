@@ -1,25 +1,25 @@
-import React, { useState, useEffect } from 'react';
+import React, { useState } from 'react';
 import Button from '@material-ui/core/Button';
 import styled from 'styled-components';
 import ReturnImageUrl from './ReturnImageUrl';
 import { makeStyles } from '@material-ui/core/styles';
 import Modal from '@material-ui/core/Modal';
-import { fireStorage } from '../myBase';
+import { authService } from '../myBase';
 
-const EditProfileNickName = ({ userObj, userObjRefresh }) => {
-  const [newNickName, setNewNickName] = useState(userObj.displayName);
+const EditProfileNickName = () => {
+  const user = authService.currentUser;
+  const [newNickName, setNewNickName] = useState(user.displayName);
 
   const onChange = (event) => {
     setNewNickName(event.target.value);
   };
   const onSubmit = async (event) => {
     event.preventDefault();
-    if (userObj.displayName !== newNickName) {
-      await userObj.updateProfile({
+    if (user.displayName !== newNickName) {
+      await user.updateProfile({
         displayName: newNickName,
       });
       setNewNickName('');
-      userObjRefresh();
     }
   };
 
@@ -27,7 +27,7 @@ const EditProfileNickName = ({ userObj, userObjRefresh }) => {
     <div>
       <h3>Edit Profile</h3>
       <h4>
-        👋 hello? <b>{userObj.displayName}</b>
+        👋 hello? <b>{user.displayName}</b>
         <form onSubmit={onSubmit}>
           <div>
             <label htmlFor='changeNickName'>change your nick name: </label>
@@ -73,7 +73,8 @@ const useStyles = makeStyles((theme) => ({
   },
 }));
 
-const EditProfileImage = ({ userObj, userObjRefresh }) => {
+const EditProfileImage = () => {
+  const user = authService.currentUser;
   const classes = useStyles();
   const [modalStyle] = useState(getModalStyle);
   const [open, setOpen] = useState(false);
@@ -89,27 +90,23 @@ const EditProfileImage = ({ userObj, userObjRefresh }) => {
   };
   const onSubmit = async (event) => {
     event.preventDefault();
-    await userObj.updateProfile({
+    await authService.currentUser.updateProfile({
       photoURL: newProfileImage,
     });
-    userObjRefresh();
     handleClose();
   };
 
   const body = (
     <div style={modalStyle} className={classes.paper}>
       <h2 id='simple-modal-title'>Text in a modal</h2>
-      <img className={classes.img} alt={userImageAlt} src={userObj.photoUrl} />
+      <img className={classes.img} alt={userImageAlt} src={user.photoURL} />
       👉
       {newProfileImage && (
         <img className={classes.img} alt={userImageAlt} src={newProfileImage} />
       )}
       <form onSubmit={onSubmit}>
         <div>
-          <ReturnImageUrl
-            userObj={userObj}
-            setNewProfileImage={setNewProfileImage}
-          />
+          <ReturnImageUrl setNewProfileImage={setNewProfileImage} />
           <Button type='submit' id='changeUserImage'>
             Confirm
           </Button>
@@ -134,11 +131,11 @@ const EditProfileImage = ({ userObj, userObjRefresh }) => {
   );
 };
 
-const EditProfile = ({ userObj, userObjRefresh }) => {
+const EditProfile = () => {
   return (
     <>
-      <EditProfileNickName userObj={userObj} userObjRefresh={userObjRefresh} />
-      <EditProfileImage userObj={userObj} userObjRefresh={userObjRefresh} />
+      <EditProfileNickName />
+      <EditProfileImage />
     </>
   );
 };

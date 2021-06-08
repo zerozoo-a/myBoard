@@ -1,5 +1,5 @@
 import React, { useState } from 'react';
-import { fireDB as db, fireStorage } from '../myBase';
+import { authService, fireDB as db, fireStorage } from '../myBase';
 import Button from '@material-ui/core/Button';
 import { makeStyles } from '@material-ui/styles';
 import IconButton from '@material-ui/core/IconButton';
@@ -33,7 +33,6 @@ const useStyles = makeStyles(() => ({
 
 export const DisplayThread = ({
   thread,
-  userObj,
   isOwner,
   imageDownloadUrls,
   setImageDownloadUrls,
@@ -42,6 +41,7 @@ export const DisplayThread = ({
   const [editThreadValue, setEditThreadValue] = useState(thread.data);
   const classes = useStyles();
   const imgAlt = 'user uploading image';
+  const user = authService.currentUser;
 
   const deleteThread = () => {
     const askDelete = window.confirm(
@@ -79,7 +79,7 @@ export const DisplayThread = ({
         {thread.imageUrl !== null ? (
           <img
             className={classes.image}
-            alt={`${userObj}'s image`}
+            alt={`${user.displayName}'s image`}
             src={thread.imageUrl}
           />
         ) : null}
@@ -139,10 +139,7 @@ export const DisplayThread = ({
                   )}
                 </div>
 
-                <UploadImageBtn
-                  setImageDownloadUrls={setImageDownloadUrls}
-                  userObj={userObj}
-                />
+                <UploadImageBtn setImageDownloadUrls={setImageDownloadUrls} />
                 <Button type='submit' size='small'>
                   commit
                 </Button>

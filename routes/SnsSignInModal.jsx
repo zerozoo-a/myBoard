@@ -4,6 +4,7 @@ import Button from '@material-ui/core/Button';
 import Modal from '@material-ui/core/Modal';
 import { authService, getFirebaseAuth } from '../myBase';
 import styled from 'styled-components';
+import store from '../store/store';
 
 // todo:
 // #1 isLoggedIn, setIsLoggedIn => redux
@@ -39,10 +40,10 @@ const useStyles = makeStyles((theme) => ({
   },
 }));
 
-export default function SnsSignInModal({ setIsLoggedIn }) {
+export default function SnsSignInModal() {
   const classes = useStyles();
-  const [modalStyle] = React.useState(getModalStyle);
-  const [open, setOpen] = React.useState(false);
+  const [modalStyle] = useState(getModalStyle);
+  const [open, setOpen] = useState(false);
 
   const sns = {
     google: 'Google',
@@ -66,10 +67,7 @@ export default function SnsSignInModal({ setIsLoggedIn }) {
         provider = new getFirebaseAuth.GithubAuthProvider();
       }
       await authService.signInWithPopup(provider);
-      console.log('sns logIn success');
-      setIsLoggedIn(true);
     } catch (error) {
-      console.log('error is occurred!');
       console.log(error);
     }
   };

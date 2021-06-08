@@ -3,7 +3,7 @@ import { AddAPhoto } from '@material-ui/icons';
 import { makeStyles } from '@material-ui/styles';
 import IconButton from '@material-ui/core/IconButton';
 import ClearIcon from '@material-ui/icons/Clear';
-import { fireStorage } from '../myBase';
+import { authService, fireStorage } from '../myBase';
 import { v4 as uuidv4 } from 'uuid';
 
 const useStyles = makeStyles(() => ({
@@ -27,9 +27,9 @@ const useStyles = makeStyles(() => ({
 export default function UploadImageBtn({
   imageDownloadUrls,
   setImageDownloadUrls,
-  userObj,
   setNewProfileImage,
 }) {
+  const user = authService.currentUser;
   const [previewImage, setPreviewImage] = useState(undefined);
   const classes = useStyles();
   const normalAlt = 'this is user image';
@@ -41,7 +41,7 @@ export default function UploadImageBtn({
       const redImageUrl = e.target.result;
       const imageRef = fireStorage
         .ref()
-        .child(`images/${userObj.uid}/${uuidv4()}/`);
+        .child(`images/${user.uid}/${uuidv4()}/`);
       const response = await imageRef.putString(redImageUrl, 'data_url');
       const imageDownloadUrl = await response.ref.getDownloadURL();
       setPreviewImage(imageDownloadUrl);

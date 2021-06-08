@@ -2,6 +2,8 @@ import React, { useState } from 'react';
 import Drawer from '@material-ui/core/Drawer';
 import { makeStyles } from '@material-ui/core';
 import Button from '@material-ui/core/Button';
+import { useSelector } from 'react-redux';
+import { selectIsOnline } from '../store/userReducer';
 
 const drawerWidth = 240;
 const useStyles = makeStyles({
@@ -23,17 +25,22 @@ export default function DrawerMenu({ children }) {
   const toggleDrawer = (open) => (e) => {
     setDrawerState(open);
   };
+  let isOnline = useSelector(selectIsOnline);
   return (
     <div>
-      <Button onClick={toggleDrawer(true)}>Open Drawer</Button>
-      <Drawer
-        anchor={'left'}
-        open={drawerState}
-        onClose={toggleDrawer(false)}
-        classes={{ paper: classes.drawerPaper }}
-        className={classes.drawer}>
-        {children}
-      </Drawer>
+      {isOnline && (
+        <div>
+          <Button onClick={toggleDrawer(true)}>Open Drawer</Button>
+          <Drawer
+            anchor={'left'}
+            open={drawerState}
+            onClose={toggleDrawer(false)}
+            classes={{ paper: classes.drawerPaper }}
+            className={classes.drawer}>
+            {children}
+          </Drawer>
+        </div>
+      )}
     </div>
   );
 }

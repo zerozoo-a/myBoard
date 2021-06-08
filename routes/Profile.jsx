@@ -3,6 +3,7 @@ import { fireDB as db } from '../myBase';
 import EditProfile from './EditProfile';
 import styled from 'styled-components';
 import { useLocation } from 'react-router';
+import { authService } from '../myBase';
 
 const MyThreadStyle = styled.div`
   & > * {
@@ -14,13 +15,14 @@ const MyThreadStyle = styled.div`
     width: 250px;
   }
 `;
-const Profile = ({ userObj, userObjRefresh, isLoggedIn }) => {
+const Profile = () => {
+  const user = authService.currentUser;
   const [myThreadList, setMyThreadList] = useState([]);
   const [isMyThreadListLoaded, setIsMyThreadListLoaded] = useState(false);
   const getMyThreads = async () => {
     const myThreads = await db
       .collection('Thread')
-      .where('uid', '==', userObj.uid)
+      .where('uid', '==', user.uid)
       .orderBy('createdAt')
       .get()
       .then((res) =>
@@ -41,13 +43,15 @@ const Profile = ({ userObj, userObjRefresh, isLoggedIn }) => {
   useEffect(() => {
     getMyThreads();
     setIsMyThreadListLoaded(true);
+    return () => getMyThreads();
   }, []);
 
   return (
     <div>
       <div>
         <h1>Profile</h1>
-        <EditProfile userObjRefresh={userObjRefresh} userObj={userObj} />
+        <EditProfile />
+        <div></div>
 
         <h4>your Threads</h4>
         {isMyThreadListLoaded && (

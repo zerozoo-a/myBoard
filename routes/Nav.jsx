@@ -2,6 +2,10 @@ import React from 'react';
 import { HashRouter as Router, Link } from 'react-router-dom';
 import LogOutBtn from './LogOutBtn';
 import styled from 'styled-components';
+import { authService } from '../myBase';
+
+import { useSelector } from 'react-redux';
+import { selectIsOnline } from '../store/userReducer';
 
 const NavStyle = styled.div`
   ul {
@@ -40,27 +44,35 @@ const NavStyle = styled.div`
   }
 `;
 
-export default function Nav({ userObj }) {
+export default function Nav() {
+  const user = authService.currentUser;
+  let isOnline = useSelector(selectIsOnline);
+  console.log('inNav isOnline', isOnline);
+  console.log('user', user);
   return (
-    <Router>
-      <NavStyle>
-        <ul>
-          <li>
-            <Link to='/'>Home</Link>
-          </li>
-          <li>
-            <Link to='/Profile'>
-              {userObj === undefined ? null : userObj.displayName}'s Profile
-            </Link>
-          </li>
-          <li>
-            <Link to='/About'>About</Link>
-          </li>
-          <div>
-            <LogOutBtn userObj={userObj} />
-          </div>
-        </ul>
-      </NavStyle>
-    </Router>
+    <>
+      {isOnline && (
+        <Router>
+          <NavStyle>
+            <ul>
+              <li>
+                <Link to='/'>Home</Link>
+              </li>
+              <li>
+                <Link to='/Profile'>
+                  {isOnline ? user.displayName : ''}'s Profile
+                </Link>
+              </li>
+              <li>
+                <Link to='/About'>About</Link>
+              </li>
+              <div>
+                <LogOutBtn />
+              </div>
+            </ul>
+          </NavStyle>
+        </Router>
+      )}
+    </>
   );
 }

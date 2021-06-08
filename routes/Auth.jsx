@@ -1,10 +1,21 @@
 import React, { useState } from 'react';
 import { authService } from '../myBase';
-import SignIn from './SignIn';
+import SignUp from './SignUp';
 import SnsSignInModal from './SnsSignInModal';
+import styled from 'styled-components';
 
-// setIsLoggedIn = > redux store()
-export default function Auth({ setIsLoggedIn }) {
+const AuthInput = styled.input.attrs((props) => ({
+  size: props.size || '1em',
+}))`
+  color: palevioletred;
+  font-size: 1em;
+  border: 2px solid palevioletred;
+  border-radius: 3px;
+  margin: ${(props) => props.size};
+  padding: ${(props) => props.size};
+`;
+
+export default function Auth({ isLoggedIn, setIsLoggedIn }) {
   const [email, setEmail] = useState('');
   const [password, setPassword] = useState('');
   const onChange = (e) => {
@@ -30,24 +41,26 @@ export default function Auth({ setIsLoggedIn }) {
   return (
     <div>
       <div>please log in</div>
-      <form onSubmit={onSubmit}>
-        <input
+      <form autoComplete='off' onSubmit={onSubmit}>
+        <AuthInput
           onChange={onChange}
           value={email}
-          name='email'
           type='text'
+          name='email'
           placeholder='E-mail'
-          required></input>
-        <input
+          required
+        />
+        <AuthInput
           onChange={onChange}
           value={password}
           name='password'
           type='password'
           placeholder='password'
-          required></input>
-        <input type='submit' value='Log In'></input>
+          required
+        />
+        <input type='submit' value='Log In' />
       </form>
-      <SignIn setIsLoggedIn={setIsLoggedIn} />
+      <SignUp setIsLoggedIn={setIsLoggedIn} />
       <SnsSignInModal setIsLoggedIn={setIsLoggedIn} />
     </div>
   );

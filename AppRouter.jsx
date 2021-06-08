@@ -4,35 +4,45 @@ import Auth from './routes/Auth';
 import Home from './routes/Home';
 import Profile from './routes/Profile';
 
-const AppRouter = ({ setIsLoggedIn, isLoggedIn, userObj, userObjRefresh }) => {
+// redux
+import store from './store/store';
+import { selectIsOnline } from './store/userReducer';
+import { useSelector } from 'react-redux';
+
+const AppRouter = ({ setIsLoggedIn, isLoggedIn }) => {
+  let isOnline = useSelector(selectIsOnline);
+  // let isOnline = store.getState().user.isOnline;
+  // console.log(isOnline);
   return (
     <BrowserRouter>
       <Switch>
-        {isLoggedIn ? (
+        {/* {isLoggedIn ? ( */}
+        {isOnline ? (
           <>
-            <Route exact path='/'>
-              <Home userObj={userObj} />
-            </Route>
+            <Switch>
+              <Route exact path='/'>
+                <Home />
+              </Route>
+              <Route exact path='/Profile'>
+                {isLoggedIn && <Profile />}
+              </Route>
+              <Route path='/'>
+                <h1>404 Not Found</h1>
+              </Route>
+            </Switch>
           </>
         ) : (
           <>
-            <Route exact path='/'>
-              <Auth setIsLoggedIn={setIsLoggedIn} />
-            </Route>
+            <Switch>
+              <Route exact path='/'>
+                <Auth isLoggedIn={isLoggedIn} setIsLoggedIn={setIsLoggedIn} />
+              </Route>
+              <Route path='/'>
+                <h1>404 Not Found</h1>
+              </Route>
+            </Switch>
           </>
         )}
-      </Switch>
-      <Switch>
-        <Route path='/Profile'>
-          {isLoggedIn && userObj && (
-            <Profile
-              isLoggedIn={isLoggedIn}
-              userObj={userObj}
-              userObjRefresh={userObjRefresh}
-            />
-          )}
-        </Route>
-        <Route path='/'>Not Found</Route>
       </Switch>
     </BrowserRouter>
   );
