@@ -5,7 +5,6 @@ import Home from './routes/Home';
 import Profile from './routes/Profile';
 
 // redux
-import store from './store/store';
 import { selectIsOnline } from './store/userReducer';
 import { useSelector } from 'react-redux';
 
@@ -24,7 +23,7 @@ const AppRouter = ({ setIsLoggedIn, isLoggedIn }) => {
                 <Home />
               </Route>
               <Route exact path='/Profile'>
-                {isLoggedIn && <Profile />}
+                {isOnline && <Profile />}
               </Route>
               <Route path='/'>
                 <h1>404 Not Found</h1>

@@ -43,7 +43,6 @@ const Profile = () => {
   useEffect(() => {
     getMyThreads();
     setIsMyThreadListLoaded(true);
-    return () => getMyThreads();
   }, []);
 
   return (
