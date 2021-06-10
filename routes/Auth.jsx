@@ -1,4 +1,4 @@
-import React, { useState } from 'react';
+import React, { useState, Suspense } from 'react';
 import { authService } from '../myBase';
 import SignUp from './SignUp';
 import SnsSignInModal from './SnsSignInModal';
@@ -6,7 +6,7 @@ import styled from 'styled-components';
 import DuckIcon from './design/DuckIcon';
 
 // import 3D
-import Meshes from './3D/Box';
+import Meshes from '../3D/Box';
 
 const AuthContainer = styled.div`
   display: grid;
@@ -16,7 +16,7 @@ const AuthContainer = styled.div`
   left: 0;
   #title {
     position: relative;
-    top: 0;
+    top: 100px;
     left: 100px;
     color: ${(props) =>
       props.mode === 'dark'
@@ -29,7 +29,7 @@ const AuthContainer = styled.div`
     min-width: 30vw;
     height: 100vh;
     margin: 0;
-    padding-top: 20vh;
+    /* padding-top: 20vh; */
     background-color: ${(props) => props.theme.colors.black};
     color: ${(props) => props.theme.colors.white};
     min-width: ${(props) => props.theme.deviceSizes.mobileM};
