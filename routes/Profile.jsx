@@ -2,9 +2,26 @@ import React, { useState, useEffect } from 'react';
 import { fireDB as db } from '../myBase';
 import EditProfile from './EditProfile';
 import styled from 'styled-components';
-import { useLocation } from 'react-router';
 import { authService } from '../myBase';
+import { useSelector } from 'react-redux';
+import { selectMode } from '../store/userReducer';
 
+const ProfileContainer = styled.div`
+  #profileTitleStyle {
+    h1 {
+      color: ${(props) => props.theme.colors.pointColor};
+    }
+  }
+  #profileYourThreads {
+    h4,
+    div {
+      color: ${(props) =>
+        props.mode === 'dark'
+          ? (props) => props.theme.colors.darkColor
+          : (props) => props.theme.colors.lightColor};
+    }
+  }
+`;
 const MyThreadStyle = styled.div`
   & > * {
     list-style: none;
@@ -19,6 +36,7 @@ const Profile = () => {
   const user = authService.currentUser;
   const [myThreadList, setMyThreadList] = useState([]);
   const [isMyThreadListLoaded, setIsMyThreadListLoaded] = useState(false);
+  const mode = useSelector(selectMode);
   const getMyThreads = async () => {
     const myThreads = await db
       .collection('Thread')
@@ -46,13 +64,14 @@ const Profile = () => {
   }, []);
 
   return (
-    <div>
-      <div>
-        <h1>Profile</h1>
+    <ProfileContainer mode={mode}>
+      <div id='profileTitleStyle'>
+        <h1>내 정보</h1>
         <EditProfile />
-        <div></div>
+      </div>
 
-        <h4>your Threads</h4>
+      <div id='profileYourThreads'>
+        <h4>내 이야기의 기록들</h4>
         {isMyThreadListLoaded && (
           <>
             <MyThreadStyle>
@@ -69,7 +88,7 @@ const Profile = () => {
           </>
         )}
       </div>
-    </div>
+    </ProfileContainer>
   );
 };
 export default Profile;

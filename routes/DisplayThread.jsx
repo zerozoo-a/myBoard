@@ -1,153 +1,191 @@
 import React, { useState } from 'react';
 import { authService, fireDB as db, fireStorage } from '../myBase';
-import Button from '@material-ui/core/Button';
-import { makeStyles } from '@material-ui/styles';
+// import Button from '@material-ui/core/Button';
 import IconButton from '@material-ui/core/IconButton';
 import { Delete, Edit } from '@material-ui/icons';
 import UploadImageBtn from './UploadImageBtn';
 import styled from 'styled-components';
+import { selectMode } from '../store/userReducer';
+import { useSelector } from 'react-redux';
 
 const ThreadStyle = styled.div`
+  #threadUserPhotoAndThreadInfo {
+    display: flex;
+  }
+  img:not(#userPhoto) {
+    width: 40vw;
+  }
   #threadUserPhotoUrl {
     img {
-      position: relative;
-      top: 4rem;
-      left: -3rem;
       width: 3rem;
       border-radius: 50%;
     }
   }
+  #threadInfo {
+    width: 50vw;
+    margin-left: ${(props) => props.theme.margins.base};
+    padding-left: ${(props) => props.theme.margins.base};
+    border: 2px solid
+      ${(props) =>
+        props.mode === 'dark'
+          ? (props) => props.theme.colors.darkBorderColor
+          : props.theme.colors.lightBorderColor};
+    background-color: ${(props) =>
+      props.mode === 'dark'
+        ? props.theme.colors.darkBackgroundColor
+        : props.theme.colors.lightBackgroundColor};
+
+    color: ${(props) =>
+      props.mode === 'dark'
+        ? props.theme.colors.darkColor
+        : props.theme.colors.lightColor};
+    border-radius: 3px;
+  }
 `;
-const useStyles = makeStyles(() => ({
-  root: {
-    '& > *': {
-      margin: '0.5px',
-    },
-  },
-  image: {
-    '&': {
-      width: '200px',
-    },
-  },
-}));
+const IsOwner = styled.div`
+  #deleteIcon {
+    color: ${(props) =>
+      props.mode === 'dark'
+        ? props.theme.colors.darkColor
+        : props.theme.colors.lightColor};
+  }
+  #editIcon {
+    color: ${(props) =>
+      props.mode === 'dark'
+        ? props.theme.colors.darkColor
+        : props.theme.colors.lightColor};
+  }
+  #uploadImageBtnAndSubmitBtn {
+    display: flex;
+  }
+`;
 
-export const DisplayThread = ({
-  thread,
-  isOwner,
-  imageDownloadUrls,
-  setImageDownloadUrls,
-}) => {
-  const [isEditOn, setIsEditOn] = useState(false);
-  const [editThreadValue, setEditThreadValue] = useState(thread.data);
-  const classes = useStyles();
-  const imgAlt = 'user uploading image';
-  const user = authService.currentUser;
+const DisplayThread = React.memo(
+  ({
+    thread,
+    isOwner,
+    imageDownloadUrls,
+    setImageDownloadUrls,
+    QuackInput,
+    SubmitBtn,
+  }) => {
+    const [isEditOn, setIsEditOn] = useState(false);
+    const [editThreadValue, setEditThreadValue] = useState(thread.data);
+    const imgAlt = 'user uploading image';
+    const user = authService.currentUser;
+    const mode = useSelector(selectMode);
 
-  const deleteThread = () => {
-    const askDelete = window.confirm(
-      'do you really want to delete this thread?'
-    );
-    if (askDelete) {
-      db.collection('Thread').doc(thread.id).delete();
-      if (thread.imageUrl === null) {
-        return;
+    const deleteThread = () => {
+      const askDelete = window.confirm('해당 thread를 정말로 삭제하시겠어요?');
+      if (askDelete) {
+        db.collection('Thread').doc(thread.id).delete();
+        if (thread.imageUrl === null) {
+          return;
+        }
+        fireStorage.refFromURL(thread.imageUrl).delete();
       }
-      fireStorage.refFromURL(thread.imageUrl).delete();
-    }
-  };
+    };
 
-  const editThread = () => {
-    setIsEditOn(!isEditOn);
-  };
+    const editThread = () => {
+      setIsEditOn(!isEditOn);
+    };
 
-  const onChange = (event) => {
-    setEditThreadValue(event.target.value);
-  };
+    const onChange = (event) => {
+      setEditThreadValue(event.target.value);
+    };
 
-  const onSubmit = (event) => {
-    event.preventDefault();
-    db.collection('Thread').doc(thread.id).update({
-      data: editThreadValue,
-      imageUrl: imageDownloadUrls,
-      edited: Date.now(),
-    });
-    setIsEditOn(false);
-  };
-  return (
-    <div>
-      <ThreadStyle>
-        {thread.imageUrl !== null ? (
-          <img
-            className={classes.image}
-            alt={`${user.displayName}'s image`}
-            src={thread.imageUrl}
-          />
-        ) : null}
-        <div id='threadUserPhotoUrl'>
-          <img src={thread.photoUrl} />
-        </div>
-        <div id='threadDate'>{thread.data}</div>
-        <div id='threadCreatedAt'>{thread.createdAt}</div>
-        <div id='threadUser'>{thread.user}</div>
-      </ThreadStyle>
-      {isOwner ? (
-        <div>
-          <IconButton
-            onClick={deleteThread}
-            className={classes.root}
-            aria-label='delete'>
-            <Delete />
-          </IconButton>
-          {isEditOn ? (
-            <>
-              <IconButton
-                color='secondary'
-                onClick={editThread}
-                className={classes.root}
-                aria-label='edit'>
-                <Edit />
-              </IconButton>
-            </>
-          ) : (
-            <>
-              <IconButton
-                onClick={editThread}
-                className={classes.root}
-                aria-label='edit'>
-                <Edit />
-              </IconButton>
-            </>
-          )}
-
-          {isEditOn ? (
-            <>
-              <form onSubmit={onSubmit}>
-                <input
-                  onChange={onChange}
-                  type='text'
-                  value={editThreadValue}
-                />
-                <div>
-                  {imageDownloadUrls === undefined ? null : (
-                    <div>
-                      <img
-                        className={classes.image}
-                        alt={imgAlt}
-                        src={imageDownloadUrls}
-                      />
-                    </div>
-                  )}
-                </div>
-
-                <UploadImageBtn setImageDownloadUrls={setImageDownloadUrls} />
-                <Button type='submit' size='small'>
-                  commit
-                </Button>
-              </form>
-            </>
+    const onSubmit = (event) => {
+      event.preventDefault();
+      db.collection('Thread')
+        .doc(thread.id)
+        .update({
+          data: editThreadValue,
+          imageUrl: imageDownloadUrls === undefined ? null : imageDownloadUrls,
+          edited: Date.now(),
+        });
+      setIsEditOn(false);
+    };
+    return (
+      <div>
+        <ThreadStyle mode={mode}>
+          {thread.imageUrl !== null ? (
+            <img alt={`${user.displayName}'s image`} src={thread.imageUrl} />
           ) : null}
-        </div>
-      ) : null}
-    </div>
-  );
-};
+          <div id='threadUserPhotoAndThreadInfo'>
+            <div id='threadUserPhotoUrl'>
+              <img id='userPhoto' alt={'user photo'} src={thread.photoUrl} />
+            </div>
+            <div id='threadInfo'>
+              <div id='threadData'>{thread.data}</div>
+              <div id='threadCreatedAt'>{thread.createdAt}</div>
+              <div id='threadUser'>{thread.user}</div>
+            </div>
+          </div>
+        </ThreadStyle>
+        {isOwner ? (
+          <IsOwner mode={mode}>
+            <IconButton
+              id='deleteIcon'
+              onClick={deleteThread}
+              aria-label='delete'>
+              <Delete />
+            </IconButton>
+            {isEditOn ? (
+              <>
+                <IconButton
+                  color='secondary'
+                  onClick={editThread}
+                  aria-label='edit'>
+                  <Edit />
+                </IconButton>
+              </>
+            ) : (
+              <>
+                <IconButton
+                  id='editIcon'
+                  onClick={editThread}
+                  aria-label='edit'>
+                  <Edit />
+                </IconButton>
+              </>
+            )}
+
+            {isEditOn ? (
+              <>
+                <form onSubmit={onSubmit}>
+                  <QuackInput
+                    onChange={onChange}
+                    type='text'
+                    // value={editThreadValue}
+                  />
+                  <div>
+                    {imageDownloadUrls === undefined ? null : (
+                      <div>
+                        <img
+                          className={classes.image}
+                          alt={imgAlt}
+                          src={imageDownloadUrls}
+                        />
+                      </div>
+                    )}
+                  </div>
+
+                  <div id='uploadImageBtnAndSubmitBtn'>
+                    <UploadImageBtn
+                      setImageDownloadUrls={setImageDownloadUrls}
+                    />
+                    <SubmitBtn type='submit' size='small'>
+                      수정하기
+                    </SubmitBtn>
+                  </div>
+                </form>
+              </>
+            ) : null}
+          </IsOwner>
+        ) : null}
+      </div>
+    );
+  }
+);
+
+export default DisplayThread;

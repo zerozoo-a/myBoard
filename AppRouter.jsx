@@ -15,7 +15,6 @@ const AppRouter = ({ setIsLoggedIn, isLoggedIn }) => {
   return (
     <BrowserRouter>
       <Switch>
-        {/* {isLoggedIn ? ( */}
         {isOnline ? (
           <>
             <Switch>
@@ -34,7 +33,7 @@ const AppRouter = ({ setIsLoggedIn, isLoggedIn }) => {
           <>
             <Switch>
               <Route exact path='/'>
-                <Auth isLoggedIn={isLoggedIn} setIsLoggedIn={setIsLoggedIn} />
+                <Auth />
               </Route>
               <Route path='/'>
                 <h1>404 Not Found</h1>

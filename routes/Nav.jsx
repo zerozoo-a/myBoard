@@ -3,11 +3,16 @@ import { HashRouter as Router, Link } from 'react-router-dom';
 import LogOutBtn from './LogOutBtn';
 import styled from 'styled-components';
 import { authService } from '../myBase';
-
 import { useSelector } from 'react-redux';
 import { selectIsOnline } from '../store/userReducer';
+import { selectMode } from '../store/userReducer';
 
 const NavStyle = styled.div`
+  background-color: ${(props) =>
+    props.mode === 'dark'
+      ? props.theme.colors.darkBackgroundColor
+      : props.theme.colors.lightBackgroundColor};
+  height: 100vh;
   ul {
     padding: 0;
     margin: 0;
@@ -17,12 +22,18 @@ const NavStyle = styled.div`
     justify-content: center;
     align-items: center;
     height: 3rem;
-    background-color: ${({ theme }) => theme.colors.lightBlue500};
+    background-color: ${(props) => props.theme.colors.pointColor};
+    color: ${(props) =>
+      props.mode === 'dark'
+        ? props.theme.colors.darkColor
+        : props.theme.colors.lightColor};
+
     border-radius: 0.5rem;
     list-style: none;
     margin: 0.5rem;
     font-size: 1rem;
     text-align: center;
+    width: 20rem;
   }
   a {
     display: flex;
@@ -47,13 +58,12 @@ const NavStyle = styled.div`
 export default function Nav() {
   const user = authService.currentUser;
   let isOnline = useSelector(selectIsOnline);
-  console.log('inNav isOnline', isOnline);
-  console.log('user', user);
+  const mode = useSelector(selectMode);
   return (
     <>
       {isOnline && (
         <Router>
-          <NavStyle>
+          <NavStyle mode={mode}>
             <ul>
               <li>
                 <Link to='/'>Home</Link>

@@ -1,39 +1,61 @@
 import React, { useState } from 'react';
-import { makeStyles } from '@material-ui/core/styles';
-import Button from '@material-ui/core/Button';
+// import { makeStyles } from '@material-ui/core/styles';
+
+import styled from 'styled-components';
 import Modal from '@material-ui/core/Modal';
 import { authService } from '../myBase';
 import unknownUserImage from '../../imgs/unknownUserIcon.png';
+import { useSelector } from 'react-redux';
+import { selectMode, selectIsOnline } from '../store/userReducer';
+import { Mail } from '@styled-icons/entypo/Mail';
+import { KeyFill } from '@styled-icons/bootstrap';
+import { useDispatch } from 'react-redux';
 
-function getModalStyle() {
-  const top = 50;
-  const left = 50;
+// function getModalStyle() {
+//   const top = 50;
+//   const left = 50;
+//   return {
+//     top: `${top}%`,
+//     left: `${left}%`,
+//     transform: `translate(-${top}%, -${left}%)`,
+//   };
+// }
+const ModalStyle = styled.div`
+  display: grid;
+  place-items: center;
+  position: absolute;
+  height: 18rem;
+  width: 35rem;
+  top: 50%;
+  left: 50%;
+  transform: translate(-50%, -50%);
+  background-color: ${(props) =>
+    props.mode === 'dark'
+      ? props.theme.colors.darkBackgroundColor
+      : props.theme.colors.lightBackgroundColor};
 
-  return {
-    top: `${top}%`,
-    left: `${left}%`,
-    transform: `translate(-${top}%, -${left}%)`,
-  };
-}
+  color: ${(props) =>
+    props.mode === 'dark'
+      ? props.theme.colors.darkColor
+      : props.theme.colors.lightColor};
+  h2,
+  p {
+    padding: 0.5rem;
+  }
+  #signUp {
+    margin: 0 auto;
+  }
+`;
 
-const useStyles = makeStyles((theme) => ({
-  paper: {
-    position: 'absolute',
-    width: 400,
-    backgroundColor: theme.palette.background.paper,
-    border: '2px solid #000',
-    boxShadow: theme.shadows[5],
-    padding: theme.spacing(2, 4, 3),
-  },
-}));
-
-export default function SignUp({ setIsLoggedIn }) {
-  const classes = useStyles();
-  const [modalStyle] = React.useState(getModalStyle);
+export default function SignUp({ Button, AuthInput }) {
+  let mode = useSelector(selectMode);
   const [open, setOpen] = React.useState(false);
   const [email, setEmail] = useState(null);
   const [password, setPassword] = useState(null);
   const [errorMsg, setErrorMsg] = useState(null);
+  const [isSignUpSuccess, setIseSignUpSuccess] = useState(false);
+  const dispatch = useDispatch();
+  const isOnline = useSelector(selectIsOnline);
 
   const onChange = (e) => {
     const value = e.target.value;
@@ -48,27 +70,24 @@ export default function SignUp({ setIsLoggedIn }) {
   const onSubmit = async (e) => {
     e.preventDefault();
     try {
-      let data;
-      data = await authService.createUserWithEmailAndPassword(email, password);
+      const data = await authService.createUserWithEmailAndPassword(
+        email,
+        password
+      );
       const user = authService.currentUser;
       user.updateProfile({
         displayName: user.email,
         photoURL: unknownUserImage,
       });
-      console.log('userPhotoUrl', user.photoURL);
-      alert('회원가입 성공! 🥳🎉');
-      setIsLoggedIn(true);
-      handleClose();
-      console.log(data);
+      return data;
     } catch (error) {
-      console.log(error);
       setErrorMsg(error);
       if (error.code === 'auth/invalid-email') {
         alert('잘못된 이메일 형식입니다. 😰', errorMsg);
       } else if (error.code === 'auth/weak-password') {
         alert('비밀번호 보안이 취약합니다.', errorMsg);
       } else {
-        alert(errorMsg);
+        alert(error);
       }
     }
   };
@@ -81,16 +100,19 @@ export default function SignUp({ setIsLoggedIn }) {
     setOpen(false);
   };
   const body = (
-    <div style={modalStyle} className={classes.paper}>
+    <ModalStyle mode={mode}>
       <h2 id='simple-modal-title'>새로운 계정 생성하기</h2>
       <p id='simple-modal-description'>
         E-mail과 password를 입력해 계정을 만들어보세요.
       </p>
       <form onSubmit={onSubmit}>
         <div>
-          <label>E-mail</label>
           <div>
-            <input
+            <label name='email'>
+              <Mail size='25' />
+            </label>
+            <AuthInput
+              mode={mode}
               placeholder='abc@gmail.com'
               type='text'
               name='email'
@@ -100,9 +122,12 @@ export default function SignUp({ setIsLoggedIn }) {
           </div>
         </div>
         <div>
-          <label>password</label>
           <div>
-            <input
+            <label name='password'>
+              <KeyFill size='25' />
+            </label>
+            <AuthInput
+              mode={mode}
               placeholder='password'
               type='password'
               name='password'
@@ -112,19 +137,16 @@ export default function SignUp({ setIsLoggedIn }) {
           </div>
           <h4>{errorMsg}</h4>
         </div>
-        <Button type='submit'>회원가입</Button>
+        <Button id='signUp' mode={mode} type='submit'>
+          회원가입
+        </Button>
       </form>
-    </div>
+    </ModalStyle>
   );
 
   return (
     <div>
-      <Button
-        onClick={handleOpen}
-        type='button'
-        size='small'
-        variant='contained'
-        color='secondary'>
+      <Button mode={mode} onClick={handleOpen}>
         새로운 계정 만들기
       </Button>
       <Modal

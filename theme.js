@@ -29,7 +29,9 @@ const margins = {
 };
 
 const interval = {
+  small: calcRem(25),
   base: calcRem(50),
+  basePlus: calcRem(75),
   lg: calcRem(100),
   xl: calcRem(150),
   xxl: calcRem(200),
@@ -71,27 +73,37 @@ const colors = {
   grey50: '#fafafa',
   grey100: '#f5f5f5',
   grey500: '#9e9e9e',
+  pointColor: 'rgb(101,151,227)',
+  darkBackgroundColor: 'rgb(18,23,29)',
+  darkBorderColor: 'rgb(39,43,49)',
+  darkColor: 'rgb(202,218,216)',
+  darkBorderColor: 'rgb(53,57,63)',
+  lightBackgroundColor: 'rgb(244,244,244)',
+  lightColor: 'rgb(32,32,32)',
+  lightBorderColor: 'rgb(70,80,88)',
 };
 
+const button = {
+  fontSize: '1rem',
+  lineHeight: '2.5em',
+  borderRadius: '3px',
+  cursor: 'pointer',
+  padding: '0.5em',
+  paddingSmall: '0.1em',
+  margin: '0.4em',
+  marginSmall: '0.1em',
+  submitColor: 'rgb(244,244,244)',
+  submitBackgroundColor: 'rgb(81,133,62)',
+  submitBorderColor: 'rgb(96,158,75)',
+  pointColor: 'rgb(101,151,227)',
+  pointBorder: 'rgb(133,181,255)',
+};
 const device = {
   mobileS: `only screen and (max-width: ${deviceSizes.mobileS})`,
   mobileM: `only screen and (max-width: ${deviceSizes.mobileM})`,
   mobileL: `only screen and (max-width: ${deviceSizes.mobileL})`,
   tablet: `only screen and (max-width: ${deviceSizes.tablet})`,
   tabletL: `only screen and (max-width: ${deviceSizes.tabletL})`,
-};
-
-const darkMode = {
-  colors: {
-    titleColor: '#121212',
-    bgColor: '#b8b8b8',
-  },
-};
-const lightMode = {
-  colors: {
-    titleColor: '#b8b8b8',
-    bgColor: '#121212',
-  },
 };
 
 const theme = {
@@ -103,8 +115,7 @@ const theme = {
   margins,
   interval,
   verticalInterval,
-  darkMode,
-  lightMode,
+  button,
 };
 
 export default theme;

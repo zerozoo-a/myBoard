@@ -5,6 +5,13 @@ import IconButton from '@material-ui/core/IconButton';
 import ClearIcon from '@material-ui/icons/Clear';
 import { authService, fireStorage } from '../myBase';
 import { v4 as uuidv4 } from 'uuid';
+import styled from 'styled-components';
+
+const UploadImageBtnContainer = styled.div`
+  #AddAPhoto {
+    color: white;
+  }
+`;
 
 const useStyles = makeStyles(() => ({
   root: {
@@ -24,7 +31,7 @@ const useStyles = makeStyles(() => ({
   },
 }));
 
-export default function UploadImageBtn({
+export default React.memo(function UploadImageBtn({
   imageDownloadUrls,
   setImageDownloadUrls,
   setNewProfileImage,
@@ -75,7 +82,7 @@ export default function UploadImageBtn({
   };
 
   return (
-    <div>
+    <UploadImageBtnContainer>
       <div>
         {previewImage === undefined ? null : (
           <div>
@@ -94,9 +101,9 @@ export default function UploadImageBtn({
         className={classes.input}></input>
       <label htmlFor='imageUpload'>
         <IconButton component='div'>
-          <AddAPhoto />
+          <AddAPhoto id='AddAPhoto' />
         </IconButton>
       </label>
-    </div>
+    </UploadImageBtnContainer>
   );
-}
+});

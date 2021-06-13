@@ -1,17 +1,34 @@
 import React, { useState } from 'react';
 import { makeStyles } from '@material-ui/core/styles';
-import Button from '@material-ui/core/Button';
+// import Button from '@material-ui/core/Button';
 import Modal from '@material-ui/core/Modal';
 import { authService, getFirebaseAuth } from '../myBase';
 import styled from 'styled-components';
-import store from '../store/store';
+import { useSelector } from 'react-redux';
+import { selectMode } from '../store/userReducer';
+import { Google } from '@styled-icons/boxicons-logos/Google';
+import { Github } from '@styled-icons/boxicons-logos/Github';
 
-// todo:
-// #1 isLoggedIn, setIsLoggedIn => redux
+// @styled-icons/boxicons-logos/Google
 
+const sns = {
+  google: 'Google',
+  apple: 'Apple',
+  github: 'GitHub',
+};
 const SnsStyle = styled.div`
   li {
-    margin: 25px 0;
+    display: grid;
+    place-items: center;
+    flex-direction: column;
+    margin: 1.5rem;
+    border: 0.5px solid #a4a1a1;
+    height: 2rem;
+    cursor: pointer;
+  }
+  #Google {
+    background-color: white;
+    color: rgb(61, 62, 63);
   }
 `;
 
@@ -32,24 +49,17 @@ const useStyles = makeStyles((theme) => ({
   paper: {
     position: 'absolute',
     width: 400,
-    backgroundColor: theme.palette.background.paper,
-
-    border: '2px solid #000',
     boxShadow: theme.shadows[5],
     padding: theme.spacing(2, 4, 3),
   },
 }));
 
-export default function SnsSignInModal() {
+export default function SnsSignInModal({ Button }) {
+  let mode = useSelector(selectMode);
   const classes = useStyles();
   const [modalStyle] = useState(getModalStyle);
   const [open, setOpen] = useState(false);
 
-  const sns = {
-    google: 'Google',
-    apple: 'Apple',
-    github: 'GitHub',
-  };
   const handleOpen = () => {
     setOpen(true);
   };
@@ -81,13 +91,19 @@ export default function SnsSignInModal() {
               key={sns.google}
               id={sns.google}
               onClick={() => onSnsClick(sns.google)}>
-              Google LogIn
+              <span>
+                <Google size='25' />
+                Google LogIn
+              </span>
             </li>
             <li
               key={sns.github}
               id={sns.github}
               onClick={() => onSnsClick(sns.github)}>
-              GitHub LogIn
+              <span>
+                <Github size='25' />
+                GitHub LogIn
+              </span>
             </li>
           </SnsStyle>
         </ul>
@@ -97,18 +113,10 @@ export default function SnsSignInModal() {
 
   return (
     <div>
-      <Button
-        onClick={handleOpen}
-        size='small'
-        variant='contained'
-        color='primary'>
+      <Button mode={mode} onClick={handleOpen}>
         SNS 로그인
       </Button>
-      <Modal
-        open={open}
-        onClose={handleClose}
-        aria-labelledby='simple-modal-title'
-        aria-describedby='simple-modal-description'>
+      <Modal open={open} onClose={handleClose}>
         {body}
       </Modal>
     </div>

@@ -10,34 +10,38 @@ import theme from './theme';
 import { createGlobalStyle } from 'styled-components';
 
 // redux
-import store from './store/store';
-import { setOnline, setOffline, selectIsOnline } from './store/userReducer';
+import {
+  setOnline,
+  setOffline,
+  selectIsOnline,
+  selectMode,
+} from './store/userReducer';
 import { useDispatch, useSelector } from 'react-redux';
 
 const GlobalStyle = createGlobalStyle`
 *, *::before, *::after{
   box-sizing:border-box;
+  list-style: none;
+  margin:0;
+  padding:0;
+  font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, Oxygen, Ubuntu, Cantarell, 'Open Sans', 'Helvetica Neue', sans-serif;
 }
 body{
-  margin:0;
-}
-canvas{
-  ${
-    '' /* display:block;
-  position:fixed;
-  width:100%;
-  height:100%;
-  left:0;
-  top:0;
-  z-index: 0; */
-  }
+  display:grid;
+  place-items:center;
+  margin-top:3rem;
+  background-color:${(props) =>
+    props.mode === 'dark'
+      ? props.theme.colors.darkBackgroundColor
+      : props.theme.colors.lightBackgroundColor}
 }
 `;
 
 const App = () => {
   let isOnline = useSelector(selectIsOnline);
-  const dispatch = useDispatch();
   const [isLoggedIn, setIsLoggedIn] = useState(false);
+  const dispatch = useDispatch();
+  const mode = useSelector(selectMode);
   useEffect(() => {
     authService.onAuthStateChanged((user) => {
       if (user) {
@@ -46,7 +50,6 @@ const App = () => {
       } else {
         setIsLoggedIn(false);
         dispatch(setOffline());
-        console.log('clicked logOutBtn isOnline:', isOnline);
       }
       return;
     });
@@ -54,7 +57,7 @@ const App = () => {
 
   return (
     <ThemeProvider theme={theme}>
-      <GlobalStyle />
+      <GlobalStyle mode={mode} />
       {isOnline && <DrawerMenu children={<Nav />} />}
       <AppRouter />
     </ThemeProvider>

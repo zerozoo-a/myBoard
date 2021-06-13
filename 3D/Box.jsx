@@ -5,7 +5,6 @@ import { OrbitControls, Stars, useGLTF } from '@react-three/drei';
 import { Physics, usePlane, useSphere } from '@react-three/cannon';
 import styled from 'styled-components';
 import Model from '../Scene.js';
-console.log(Model);
 const MashesContainer = styled.div`
   position: fixed;
   left: 0;
