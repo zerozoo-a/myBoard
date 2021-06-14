@@ -5,11 +5,7 @@ import { authService } from './myBase';
 import 'firebase/auth';
 import Nav from './routes/Nav';
 import DrawerMenu from './routes/DrawerMenu';
-import styled, {
-  ThemeProvider,
-  createGlobalStyle,
-  keyframes,
-} from 'styled-components';
+import styled, { ThemeProvider, createGlobalStyle } from 'styled-components';
 import theme from './theme';
 import Mode from './routes/Mode';
 // redux

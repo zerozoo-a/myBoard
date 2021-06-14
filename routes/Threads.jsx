@@ -8,6 +8,7 @@ import { useSelector, useDispatch } from 'react-redux';
 import { selectMode } from '../store/userReducer';
 import { selectURL, setURL } from '../store/imageReducer';
 import SetImageURL from './SetImageURL';
+import ImageModal from './ImageModal';
 
 const ThreadStyle = styled.div`
   display: grid;
@@ -37,8 +38,9 @@ const ThreadStyle = styled.div`
     margin: 0.5rem;
     align-items: center;
 
-    img {
+    #normalImage {
       width: 8rem;
+      cursor: pointer;
       margin-left: 2rem;
     }
   }
@@ -86,7 +88,7 @@ const SubmitBtn = styled.button`
 const Threads = () => {
   const [thread, setThread] = useState('');
   const [threads, setThreads] = useState([]);
-  const [imageDownloadUrls, setImageDownloadUrls] = useState();
+  const [isImageClicked, setIsImageClicked] = useState(false);
   const mode = useSelector(selectMode);
   const URL = useSelector(selectURL);
   const date = new Date();
@@ -139,7 +141,9 @@ const Threads = () => {
     });
     setThread('');
     dispatch(setURL(null));
-    setImageDownloadUrls(undefined);
+  };
+  const imageClickOn = () => {
+    setIsImageClicked(true);
   };
 
   return (
@@ -169,7 +173,17 @@ const Threads = () => {
             <SubmitBtn mode={mode} type='submit' id='submit' name='submit'>
               등록하기
             </SubmitBtn>
-            {URL === null ? null : <img src={URL} alt={alt} />}
+            {URL === null ? null : (
+              <img
+                id='normalImage'
+                onClick={imageClickOn}
+                src={URL}
+                alt={alt}
+              />
+            )}
+            {isImageClicked && (
+              <ImageModal URL={URL} setIsImageClicked={setIsImageClicked} />
+            )}
           </div>
         </form>
       </div>
@@ -179,8 +193,6 @@ const Threads = () => {
             key={thread.id}
             thread={thread}
             isOwner={user.uid === thread.uid}
-            imageDownloadUrls={imageDownloadUrls}
-            setImageDownloadUrls={setImageDownloadUrls}
             QuackInput={QuackInput}
             SubmitBtn={SubmitBtn}
           />

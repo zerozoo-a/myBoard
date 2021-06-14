@@ -1,5 +1,4 @@
 import React, { useState } from 'react';
-// import Button from '@material-ui/core/Button';
 import styled from 'styled-components';
 import SetImageURL from './SetImageURL';
 
@@ -110,14 +109,17 @@ const ModalBodyContainer = styled.div`
     margin: 1rem;
   }
 `;
-const EditProfileNickName = () => {
+const EditProfileNickName = React.memo(function EditProfileNickNameFnc() {
   const user = authService.currentUser;
   const [newNickName, setNewNickName] = useState(user.displayName);
   const mode = useSelector(selectMode);
 
-  const onChange = (event) => {
-    setNewNickName(event.target.value);
-  };
+  const onChange = React.useCallback(
+    (event) => {
+      setNewNickName(event.target.value);
+    },
+    [newNickName]
+  );
   const onSubmit = async (event) => {
     event.preventDefault();
     if (user.displayName !== newNickName) {
@@ -167,7 +169,7 @@ const EditProfileNickName = () => {
       </TableContainer>
     </EditProfileNickNameContainer>
   );
-};
+});
 
 const EditProfileImageContainer = styled.div`
   min-width: ${(props) => props.theme.deviceSizes.mobileL};
@@ -196,7 +198,7 @@ const EditProfileImageContainer = styled.div`
     min-width: 20vw;
   }
 `;
-const EditProfileImage = () => {
+const EditProfileImage = React.memo(function EditImage() {
   const user = authService.currentUser;
   const [open, setOpen] = useState(false);
   const userImageAlt = 'user image';
@@ -276,14 +278,14 @@ const EditProfileImage = () => {
       </TableContainer>
     </EditProfileImageContainer>
   );
-};
+});
 
-const EditProfile = () => {
+const EditProfile = React.memo(function () {
   return (
     <>
       <EditProfileNickName />
       <EditProfileImage />
     </>
   );
-};
+});
 export default EditProfile;

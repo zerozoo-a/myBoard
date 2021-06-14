@@ -8,6 +8,7 @@ import { selectURL, setURL } from '../store/imageReducer';
 import { selectEdit, setEdit } from '../store/editReducer';
 import { useSelector, useDispatch } from 'react-redux';
 import SetImageURL from './SetImageURL';
+import ImageModal from './ImageModal';
 
 const DisplayThreadContainer = styled.div`
   margin: 3rem;
@@ -22,7 +23,10 @@ const ThreadStyle = styled.div`
   #threadUserPhotoAndThreadInfo {
     display: flex;
   }
-  img:not(#userPhoto) {
+  img {
+    cursor: pointer;
+  }
+  img:not(#userPhoto, #modalImg) {
     width: 20vw;
     margin-bottom: 2rem;
   }
@@ -84,7 +88,7 @@ const DisplayThread = React.memo(
   ({ thread, isOwner, imageDownloadUrls, QuackInput, SubmitBtn }) => {
     const [isEditOn, setIsEditOn] = useState(false);
     const [editThreadValue, setEditThreadValue] = useState(thread.data);
-    const [prevLike, setPrevLike] = useState();
+    const [isImageClicked, setIsImageClicked] = useState(false);
     const imgAlt = 'user uploading image';
     const user = authService.currentUser;
     const mode = useSelector(selectMode);
@@ -128,12 +132,27 @@ const DisplayThread = React.memo(
       dispatch(setURL(null));
       setIsEditOn(false);
     };
+    const clickImage = () => {
+      setIsImageClicked(true);
+    };
 
     return (
       <DisplayThreadContainer>
         <ThreadStyle mode={mode}>
           {thread.imageURL !== null ? (
-            <img alt={`${user.displayName}'s image`} src={thread.imageURL} />
+            <>
+              <img
+                onClick={clickImage}
+                alt={`${user.displayName}'s image`}
+                src={thread.imageURL}
+              />
+              {isImageClicked && (
+                <ImageModal
+                  URL={thread.imageURL}
+                  setIsImageClicked={setIsImageClicked}
+                />
+              )}
+            </>
           ) : null}
           <div id='threadUserPhotoAndThreadInfo'>
             <div id='threadUserPhotoUrl'>
