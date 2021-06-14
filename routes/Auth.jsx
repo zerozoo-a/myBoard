@@ -13,6 +13,8 @@ import Meshes from '../3D/Box';
 
 const AuthContainer = styled.div`
   position: absolute;
+  left: 0;
+  top: 0;
   width: 30vw;
   height: 100vh;
   overflow-y: scroll;

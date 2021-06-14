@@ -70,7 +70,7 @@ export default function Nav() {
               </li>
               <li>
                 <Link to='/Profile'>
-                  {isOnline ? user.displayName : ''}'s Profile
+                  {isOnline ? user.displayName : ''}의 정보
                 </Link>
               </li>
               <li>

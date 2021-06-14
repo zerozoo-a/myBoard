@@ -1,34 +1,35 @@
 import React, { useState } from 'react';
 // import Button from '@material-ui/core/Button';
 import styled from 'styled-components';
-import ReturnImageUrl from './ReturnImageUrl';
-import { makeStyles } from '@material-ui/core/styles';
+import SetImageURL from './SetImageURL';
+
 import Modal from '@material-ui/core/Modal';
 import { authService } from '../myBase';
-import { useSelector } from 'react-redux';
-import { selectMode } from '../store/userReducer';
 import Table from '@material-ui/core/Table';
 import TableHead from '@material-ui/core/TableHead';
 import TableBody from '@material-ui/core/TableBody';
 import TableCell from '@material-ui/core/TableCell';
 import TableContainer from '@material-ui/core/TableContainer';
 import TableRow from '@material-ui/core/TableRow';
+import ImagePlaceHolder from './imagePlaceholder';
+
+import { useSelector, useDispatch } from 'react-redux';
+import { selectMode } from '../store/userReducer';
+import { selectURL, setURL } from '../store/imageReducer';
 
 const EditProfileNickNameContainer = styled.div`
-  * {
-    border: none;
-  }
-  color: ${(props) =>
-    props.mode === 'dark'
-      ? props.theme.colors.darkColor
-      : props.theme.colors.lightColor};
-
-  #MyProfile {
+  * ::before,
+  *,
+  * ::after {
     border: none;
     color: ${(props) =>
       props.mode === 'dark'
         ? props.theme.colors.darkColor
         : props.theme.colors.lightColor};
+  }
+
+  #headMyProfile {
+    border: none;
   }
   #inputNickName {
     height: 2rem;
@@ -36,13 +37,15 @@ const EditProfileNickNameContainer = styled.div`
     border-radius: 4px;
     margin-right: 1rem;
   }
-  #myNickName {
+  #bodyRow * {
     width: 30%;
     min-width: 30%;
     color: ${(props) =>
       props.mode === 'dark'
         ? props.theme.colors.darkColor
         : props.theme.colors.lightColor};
+  }
+  #myNickName {
     border-bottom: 1px solid
       ${(props) =>
         props.mode === 'dark'
@@ -59,6 +62,9 @@ const EditProfileNickNameContainer = styled.div`
     #nickNameInputSet {
       white-space: nowrap;
       min-width: 15rem;
+      #inputNickName {
+        min-width: 20vw;
+      }
     }
   }
 `;
@@ -81,8 +87,15 @@ const ModalBodyContainer = styled.div`
   transform: translate(-50%, -50%);
   width: 60%;
   height: 50%;
-  background-color: white;
-  box-shadow: 6px 2px 2px black;
+  background-color: ${(props) =>
+    props.mode === 'dark'
+      ? props.theme.colors.darkBackgroundColor
+      : props.theme.colors.lightBackgroundColor};
+  color: ${(props) =>
+    props.mode === 'dark'
+      ? props.theme.colors.darkColor
+      : props.theme.colors.lightColor};
+  box-shadow: 6px 2px 2px rgba(13, 24, 25, 0.5);
   padding: 2rem;
   img {
     width: 8rem;
@@ -121,13 +134,13 @@ const EditProfileNickName = () => {
         <Table className={'myInfo'} aria-label='myInfo'>
           <TableHead>
             <TableRow>
-              <TableCell id='MyProfile'>
+              <TableCell id='headMyProfile'>
                 <h3>내 정보 편집하기</h3>
               </TableCell>
             </TableRow>
           </TableHead>
-          <TableBody id='tableBody'>
-            <TableRow>
+          <TableBody>
+            <TableRow id='bodyRow'>
               <TableCell id='myNickName' key={user.displayName}>
                 내 별명: <b>{user.displayName}</b>
               </TableCell>
@@ -156,31 +169,6 @@ const EditProfileNickName = () => {
   );
 };
 
-function getModalStyle() {
-  const top = 50;
-  const left = 50;
-
-  return {
-    top: `${top}%`,
-    left: `${left}%`,
-    transform: `translate(-${top}%, -${left}%)`,
-  };
-}
-
-const useStyles = makeStyles((theme) => ({
-  paper: {
-    position: 'absolute',
-    width: 400,
-    backgroundColor: theme.palette.background.paper,
-    border: '2px solid #000',
-    boxShadow: theme.shadows[5],
-    padding: theme.spacing(2, 4, 3),
-  },
-  img: {
-    width: 150,
-  },
-}));
-
 const EditProfileImageContainer = styled.div`
   min-width: ${(props) => props.theme.deviceSizes.mobileL};
   #changeImageButton {
@@ -190,6 +178,13 @@ const EditProfileImageContainer = styled.div`
           ? props.theme.colors.darkBorderColor
           : props.theme.colors.lightBorderColor};
   }
+  #myPhotoURL {
+    color: ${(props) =>
+      props.mode === 'dark'
+        ? props.theme.colors.darkColor
+        : props.theme.colors.lightColor};
+    border: none;
+  }
   img {
     width: 7rem;
   }
@@ -198,17 +193,16 @@ const EditProfileImageContainer = styled.div`
     border-bottom: 1px solid ${(props) => props.theme.colors.darkBorderColor};
   }
   #userImage {
-    width: 30%;
+    min-width: 20vw;
   }
 `;
 const EditProfileImage = () => {
   const user = authService.currentUser;
-  const classes = useStyles();
-  const [modalStyle] = useState(getModalStyle);
   const [open, setOpen] = useState(false);
-  const [newProfileImage, setNewProfileImage] = useState(null);
   const userImageAlt = 'user image';
   const mode = useSelector(selectMode);
+  const URL = useSelector(selectURL);
+  const dispatch = useDispatch();
   const userPhotoURL = authService.currentUser.photoURL;
 
   const handleOpen = () => {
@@ -221,29 +215,24 @@ const EditProfileImage = () => {
   const onSubmit = async (event) => {
     event.preventDefault();
     await authService.currentUser.updateProfile({
-      photoURL: newProfileImage,
+      photoURL: URL,
     });
+    dispatch(setURL(null));
     handleClose();
   };
 
   const body = (
-    // <div style={modalStyle} className={classes.paper}>
     <ModalBodyContainer mode={mode}>
       <h2 id='simple-modal-title'>이미지로 자신을 나타내보세요!</h2>
       <div id='images'>
-        <img className={classes.img} alt={userImageAlt} src={user.photoURL} />
+        <img alt={userImageAlt} src={user.photoURL} />
         <span id='pingerTip'>👉</span>
-        {newProfileImage && (
-          <img
-            className={classes.img}
-            alt={userImageAlt}
-            src={newProfileImage}
-          />
-        )}
+        {!URL && <ImagePlaceHolder />}
+        {URL && <img alt={userImageAlt} src={URL} />}
       </div>
       <form onSubmit={onSubmit}>
         <div>
-          <ReturnImageUrl setNewProfileImage={setNewProfileImage} />
+          <SetImageURL />
           <Button mode={mode} type='submit' id='changeUserImage'>
             변경하기
           </Button>
@@ -256,6 +245,13 @@ const EditProfileImage = () => {
     <EditProfileImageContainer mode={mode}>
       <TableContainer>
         <Table>
+          <TableHead>
+            <TableRow>
+              <TableCell id='myPhotoURL'>
+                <h3>내 대표 이미지</h3>
+              </TableCell>
+            </TableRow>
+          </TableHead>
           <TableBody>
             <TableRow>
               <TableCell id='userImage' className='imageContainerCell'>
@@ -263,7 +259,7 @@ const EditProfileImage = () => {
               </TableCell>
               <TableCell className='imageContainerCell'>
                 <Button mode={mode} type='button' onClick={handleOpen}>
-                  내 대표 이미지 변경하기
+                  이미지 변경하기
                 </Button>
                 <Modal
                   id='modal'

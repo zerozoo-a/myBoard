@@ -5,10 +5,13 @@ import { authService } from './myBase';
 import 'firebase/auth';
 import Nav from './routes/Nav';
 import DrawerMenu from './routes/DrawerMenu';
-import { ThemeProvider } from 'styled-components';
+import styled, {
+  ThemeProvider,
+  createGlobalStyle,
+  keyframes,
+} from 'styled-components';
 import theme from './theme';
-import { createGlobalStyle } from 'styled-components';
-
+import Mode from './routes/Mode';
 // redux
 import {
   setOnline,
@@ -33,8 +36,14 @@ body{
   background-color:${(props) =>
     props.mode === 'dark'
       ? props.theme.colors.darkBackgroundColor
-      : props.theme.colors.lightBackgroundColor}
+      : props.theme.colors.lightBackgroundColor};
 }
+`;
+const Menus = styled.div`
+  display: flex;
+  #ModeContainer {
+    margin: 0 1.5rem;
+  }
 `;
 
 const App = () => {
@@ -58,7 +67,15 @@ const App = () => {
   return (
     <ThemeProvider theme={theme}>
       <GlobalStyle mode={mode} />
-      {isOnline && <DrawerMenu children={<Nav />} />}
+      <span>
+        {isOnline && (
+          <Menus>
+            <DrawerMenu children={<Nav />} />
+
+            <div id='ModeContainer'>{isOnline && <Mode />}</div>
+          </Menus>
+        )}
+      </span>
       <AppRouter />
     </ThemeProvider>
   );

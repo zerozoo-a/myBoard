@@ -10,16 +10,8 @@ import { selectMode, selectIsOnline } from '../store/userReducer';
 import { Mail } from '@styled-icons/entypo/Mail';
 import { KeyFill } from '@styled-icons/bootstrap';
 import { useDispatch } from 'react-redux';
+import PhraseGen from 'korean-random-words';
 
-// function getModalStyle() {
-//   const top = 50;
-//   const left = 50;
-//   return {
-//     top: `${top}%`,
-//     left: `${left}%`,
-//     transform: `translate(-${top}%, -${left}%)`,
-//   };
-// }
 const ModalStyle = styled.div`
   display: grid;
   place-items: center;
@@ -56,6 +48,7 @@ export default function SignUp({ Button, AuthInput }) {
   const [isSignUpSuccess, setIseSignUpSuccess] = useState(false);
   const dispatch = useDispatch();
   const isOnline = useSelector(selectIsOnline);
+  const phraseGen = new PhraseGen();
 
   const onChange = (e) => {
     const value = e.target.value;
@@ -76,7 +69,7 @@ export default function SignUp({ Button, AuthInput }) {
       );
       const user = authService.currentUser;
       user.updateProfile({
-        displayName: user.email,
+        displayName: phraseGen.generatePhrase(),
         photoURL: unknownUserImage,
       });
       return data;

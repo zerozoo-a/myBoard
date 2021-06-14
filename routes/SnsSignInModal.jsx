@@ -9,8 +9,6 @@ import { selectMode } from '../store/userReducer';
 import { Google } from '@styled-icons/boxicons-logos/Google';
 import { Github } from '@styled-icons/boxicons-logos/Github';
 
-// @styled-icons/boxicons-logos/Google
-
 const sns = {
   google: 'Google',
   apple: 'Apple',
@@ -78,7 +76,7 @@ export default function SnsSignInModal({ Button }) {
       }
       await authService.signInWithPopup(provider);
     } catch (error) {
-      console.log(error);
+      alert(error);
     }
   };
 

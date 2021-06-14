@@ -1,23 +1,38 @@
-import React, { useState } from 'react';
-import { authService, fireDB as db, fireStorage } from '../myBase';
-// import Button from '@material-ui/core/Button';
+import React, { useState, useEffect } from 'react';
+import { authService, fireDB as db, fireDB, fireStorage } from '../myBase';
 import IconButton from '@material-ui/core/IconButton';
 import { Delete, Edit } from '@material-ui/icons';
-import UploadImageBtn from './UploadImageBtn';
 import styled from 'styled-components';
 import { selectMode } from '../store/userReducer';
-import { useSelector } from 'react-redux';
+import { selectURL, setURL } from '../store/imageReducer';
+import { selectEdit, setEdit } from '../store/editReducer';
+import { useSelector, useDispatch } from 'react-redux';
+import SetImageURL from './SetImageURL';
 
+const DisplayThreadContainer = styled.div`
+  margin: 3rem;
+  padding: 1rem;
+  border-bottom: 1px solid
+    ${(props) =>
+      props.mode === 'dark'
+        ? props.theme.colors.darkBorderColor
+        : props.theme.colors.lightBorderColor};
+`;
 const ThreadStyle = styled.div`
   #threadUserPhotoAndThreadInfo {
     display: flex;
   }
   img:not(#userPhoto) {
-    width: 40vw;
+    width: 20vw;
+    margin-bottom: 2rem;
+  }
+  #threadData {
+    padding: 0.5rem 0 2rem 0;
   }
   #threadUserPhotoUrl {
     img {
       width: 3rem;
+      height: 3rem;
       border-radius: 50%;
     }
   }
@@ -58,22 +73,28 @@ const IsOwner = styled.div`
   #uploadImageBtnAndSubmitBtn {
     display: flex;
   }
+  #setImageBtnAndSubmitBtn {
+    img {
+      width: 10rem;
+    }
+  }
 `;
 
 const DisplayThread = React.memo(
-  ({
-    thread,
-    isOwner,
-    imageDownloadUrls,
-    setImageDownloadUrls,
-    QuackInput,
-    SubmitBtn,
-  }) => {
+  ({ thread, isOwner, imageDownloadUrls, QuackInput, SubmitBtn }) => {
     const [isEditOn, setIsEditOn] = useState(false);
     const [editThreadValue, setEditThreadValue] = useState(thread.data);
+    const [prevLike, setPrevLike] = useState();
     const imgAlt = 'user uploading image';
     const user = authService.currentUser;
     const mode = useSelector(selectMode);
+    const URL = useSelector(selectURL);
+    const edit = useSelector(selectEdit);
+    const dispatch = useDispatch();
+
+    useEffect(() => {
+      if (!edit && isEditOn) setIsEditOn(false);
+    }, [edit]);
 
     const deleteThread = () => {
       const askDelete = window.confirm('해당 thread를 정말로 삭제하시겠어요?');
@@ -88,6 +109,7 @@ const DisplayThread = React.memo(
 
     const editThread = () => {
       setIsEditOn(!isEditOn);
+      dispatch(setEdit());
     };
 
     const onChange = (event) => {
@@ -100,25 +122,27 @@ const DisplayThread = React.memo(
         .doc(thread.id)
         .update({
           data: editThreadValue,
-          imageUrl: imageDownloadUrls === undefined ? null : imageDownloadUrls,
+          imageURL: URL === null ? null : URL,
           edited: Date.now(),
         });
+      dispatch(setURL(null));
       setIsEditOn(false);
     };
+
     return (
-      <div>
+      <DisplayThreadContainer>
         <ThreadStyle mode={mode}>
-          {thread.imageUrl !== null ? (
-            <img alt={`${user.displayName}'s image`} src={thread.imageUrl} />
+          {thread.imageURL !== null ? (
+            <img alt={`${user.displayName}'s image`} src={thread.imageURL} />
           ) : null}
           <div id='threadUserPhotoAndThreadInfo'>
             <div id='threadUserPhotoUrl'>
-              <img id='userPhoto' alt={'user photo'} src={thread.photoUrl} />
+              <img id='userPhoto' alt={'user photo'} src={thread.photoURL} />
             </div>
             <div id='threadInfo'>
               <div id='threadData'>{thread.data}</div>
-              <div id='threadCreatedAt'>{thread.createdAt}</div>
-              <div id='threadUser'>{thread.user}</div>
+              <div id='threadCreatedAt'>시간: {thread.createdAt}</div>
+              <div id='threadUser'>ID: {thread.user}</div>
             </div>
           </div>
         </ThreadStyle>
@@ -130,7 +154,7 @@ const DisplayThread = React.memo(
               aria-label='delete'>
               <Delete />
             </IconButton>
-            {isEditOn ? (
+            {isEditOn && edit ? (
               <>
                 <IconButton
                   color='secondary'
@@ -150,30 +174,13 @@ const DisplayThread = React.memo(
               </>
             )}
 
-            {isEditOn ? (
+            {isEditOn && edit ? (
               <>
                 <form onSubmit={onSubmit}>
-                  <QuackInput
-                    onChange={onChange}
-                    type='text'
-                    // value={editThreadValue}
-                  />
-                  <div>
-                    {imageDownloadUrls === undefined ? null : (
-                      <div>
-                        <img
-                          className={classes.image}
-                          alt={imgAlt}
-                          src={imageDownloadUrls}
-                        />
-                      </div>
-                    )}
-                  </div>
-
-                  <div id='uploadImageBtnAndSubmitBtn'>
-                    <UploadImageBtn
-                      setImageDownloadUrls={setImageDownloadUrls}
-                    />
+                  <QuackInput onChange={onChange} type='text' />
+                  <div id='setImageBtnAndSubmitBtn'>
+                    {URL && <img alt={imgAlt} src={URL} />}
+                    <SetImageURL />
                     <SubmitBtn type='submit' size='small'>
                       수정하기
                     </SubmitBtn>
@@ -183,7 +190,7 @@ const DisplayThread = React.memo(
             ) : null}
           </IsOwner>
         ) : null}
-      </div>
+      </DisplayThreadContainer>
     );
   }
 );

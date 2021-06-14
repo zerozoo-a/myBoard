@@ -1,6 +1,4 @@
 import { createSlice } from '@reduxjs/toolkit';
-import { authService } from '../myBase';
-// import { isUserSignUpSuccess } from './actions/logIn';
 const initialState = {
   isOnline: false,
   mode: 'dark',

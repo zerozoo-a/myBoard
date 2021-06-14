@@ -4,12 +4,24 @@ import DisplayThread from './DisplayThread';
 import UploadImageBtn from './UploadImageBtn';
 import styled from 'styled-components';
 import { useLocation } from 'react-router';
-import { useSelector } from 'react-redux';
+import { useSelector, useDispatch } from 'react-redux';
 import { selectMode } from '../store/userReducer';
+import { selectURL, setURL } from '../store/imageReducer';
+import SetImageURL from './SetImageURL';
+
 const ThreadStyle = styled.div`
   display: grid;
   place-items: center;
   color: ${(props) => props.theme.colors.pointColor};
+  #userInputThread {
+    margin-bottom: 5.5rem;
+    padding-bottom: 2rem;
+    border-bottom: 1px solid
+      ${(props) =>
+        props.mode === 'dark'
+          ? props.theme.colors.darkBorderColor
+          : props.theme.colors.lightBorderColor};
+  }
   #userPhotoAndInputContainer {
     display: flex;
     align-items: center;
@@ -17,11 +29,18 @@ const ThreadStyle = styled.div`
   }
   #inputUserPhotoURL {
     width: 3rem;
+    height: 3rem;
     border-radius: 50%;
   }
   #uploadImageBtnAndSubmitBtn {
     display: flex;
     margin: 0.5rem;
+    align-items: center;
+
+    img {
+      width: 8rem;
+      margin-left: 2rem;
+    }
   }
 `;
 const QuackInput = styled.input.attrs(() => ({
@@ -50,9 +69,13 @@ const QuackInput = styled.input.attrs(() => ({
 `;
 const SubmitBtn = styled.button`
   min-width: ${(props) => props.theme.interval.basePlus};
-  min-height: ${(props) => props.theme.interval.small};
+  min-height: ${(props) => props.theme.interval.base};
+  max-height: ${(props) => props.theme.interval.base};
   background-color: ${(props) => props.theme.button.submitBackgroundColor};
-  color: ${(props) => props.theme.button.submitColor};
+  color: ${(props) =>
+    props.mode === 'dark'
+      ? props.theme.colors.darkColor
+      : props.theme.colors.lightColor};
   border: 2px solid ${(props) => props.theme.button.submitBorderColor};
   border-radius: 5px;
   cursor: pointer;
@@ -65,8 +88,7 @@ const Threads = () => {
   const [threads, setThreads] = useState([]);
   const [imageDownloadUrls, setImageDownloadUrls] = useState();
   const mode = useSelector(selectMode);
-  console.log('mode: ', mode);
-
+  const URL = useSelector(selectURL);
   const date = new Date();
   const year = date.getFullYear();
   const month = date.getMonth();
@@ -75,16 +97,16 @@ const Threads = () => {
   const minutes = date.getMinutes();
   const seconds = date.getSeconds();
   const metaCreatedTime = date.getTime();
-  const ThreadsTitle = 'welcome to Thread Board';
+  const ThreadsTitle = 'Welcome to Quack Quack Board!';
+  const alt = 'user uploaded image';
   let location = useLocation();
   const user = authService.currentUser;
-
-  // console.log('user photoURL', user);
+  const dispatch = useDispatch();
 
   useEffect(() => {
     const fetchSnapShot = db
       .collection('Thread')
-      .orderBy('metaCreatedTime')
+      .orderBy('metaCreatedTime', 'desc')
       .onSnapshot((snapShot) => {
         const snapShots = snapShot.docs.map((doc) => ({
           id: doc.id,
@@ -112,10 +134,11 @@ const Threads = () => {
       `,
       uid: user.uid,
       user: user.displayName,
-      photoUrl: user.photoURL,
-      imageUrl: imageDownloadUrls ? imageDownloadUrls : null,
+      photoURL: user.photoURL,
+      imageURL: URL ? URL : null,
     });
     setThread('');
+    dispatch(setURL(null));
     setImageDownloadUrls(undefined);
   };
 
@@ -123,7 +146,7 @@ const Threads = () => {
     <ThreadStyle mode={mode}>
       <h1>HOME</h1>
       <h4> {ThreadsTitle}</h4>
-      <div>
+      <div id='userInputThread'>
         <form onSubmit={onSubmit}>
           <div id='userPhotoAndInputContainer'>
             <img id='inputUserPhotoURL' src={user.photoURL} />
@@ -140,13 +163,13 @@ const Threads = () => {
             />
           </div>
           <div id='uploadImageBtnAndSubmitBtn'>
-            <UploadImageBtn
-              imageDownloadUrls={imageDownloadUrls}
-              setImageDownloadUrls={setImageDownloadUrls}
-            />
-            <SubmitBtn type='submit' id='submit' name='submit'>
+            <div>
+              <SetImageURL />
+            </div>
+            <SubmitBtn mode={mode} type='submit' id='submit' name='submit'>
               등록하기
             </SubmitBtn>
+            {URL === null ? null : <img src={URL} alt={alt} />}
           </div>
         </form>
       </div>

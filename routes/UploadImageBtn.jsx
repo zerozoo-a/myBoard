@@ -31,7 +31,7 @@ const useStyles = makeStyles(() => ({
   },
 }));
 
-export default React.memo(function UploadImageBtn({
+export default function UploadImageBtn({
   imageDownloadUrls,
   setImageDownloadUrls,
   setNewProfileImage,
@@ -106,4 +106,4 @@ export default React.memo(function UploadImageBtn({
       </label>
     </UploadImageBtnContainer>
   );
-});
+}
