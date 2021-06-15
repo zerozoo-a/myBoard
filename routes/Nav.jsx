@@ -13,7 +13,8 @@ const NavStyle = styled.div`
     props.mode === 'dark'
       ? props.theme.colors.darkBackgroundColor
       : props.theme.colors.lightBackgroundColor};
-  height: 100vh;
+  height: 100%;
+
   ul {
     padding: 0;
     margin: 0;
@@ -54,6 +55,10 @@ const NavStyle = styled.div`
     height: 100%;
     cursor: pointer;
   }
+
+  @media screen and (max-width: ${(props) => props.theme.deviceSizes.tablet}) {
+    width: 10rem;
+  }
 `;
 
 export default function Nav() {
@@ -63,8 +68,8 @@ export default function Nav() {
   return (
     <>
       {isOnline && (
-        <Router>
-          <NavStyle mode={mode}>
+        <NavStyle mode={mode}>
+          <Router>
             <ul>
               <motion.div whileHover={{ scale: 1.0 }} whileTap={{ scale: 0.9 }}>
                 <li>
@@ -96,8 +101,8 @@ export default function Nav() {
                 </motion.div>
               </div>
             </ul>
-          </NavStyle>
-        </Router>
+          </Router>
+        </NavStyle>
       )}
     </>
   );

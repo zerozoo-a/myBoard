@@ -30,12 +30,16 @@ const GlobalStyle = createGlobalStyle`
 body{
   display:grid;
   place-items:center;
-  margin-top:3rem;
   background-color:${(props) =>
     props.mode === 'dark'
       ? props.theme.colors.darkBackgroundColor
       : props.theme.colors.lightBackgroundColor};
+
+      .MuiPaper-root{
+        background-color:black;
+      }
 }
+
 `;
 const Menus = styled.div`
   position: absolute;
@@ -43,26 +47,30 @@ const Menus = styled.div`
   align-items: center;
   justify-content: center;
   cursor: pointer;
-  top: 18%;
-  #DrawerMenu {
-    height: 42px;
-  }
+  top: 20%;
 
   @media screen and (max-width: ${(props) => props.theme.deviceSizes.tabletL}) {
     position: fixed;
     flex-direction: column;
-    align-items: center;
     top: 25%;
-    left: -5%;
+    left: 0%;
     #ModeContainer {
       transform: rotate(90deg);
-      margin-top: 1rem;
+      margin-top: 3rem;
     }
   }
-  @media screen and (max-width: ${(props) => props.theme.deviceSizes.mobileS}) {
-    top: 25%;
-    left: -5%;
-  }
+  @media screen and (max-width: ${(props) => props.theme.deviceSizes.mobileM}) {
+    flex-direction: row;
+    align-items: center;
+    justify-content: center;
+    top: 0%;
+    left: 5%;
+    #ModeContainer {
+      transform: rotate(0deg);
+      margin-left: 0.5rem;
+      margin: 0;
+    }
+  } ;
 `;
 
 const App = () => {
@@ -96,12 +104,10 @@ const App = () => {
               </Link>
             </Router>
             <Menus>
-              <div id='DrawerMenu'>
-                <DrawerMenu
-                  onClick={() => setIsOpen(!isOpen)}
-                  children={<Nav />}
-                />
-              </div>
+              <DrawerMenu
+                onClick={() => setIsOpen(!isOpen)}
+                children={<Nav />}
+              />
               <div id='ModeContainer'>{isOnline && <Mode />}</div>
             </Menus>
           </div>

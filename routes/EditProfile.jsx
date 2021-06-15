@@ -17,6 +17,7 @@ import { selectMode } from '../store/userReducer';
 import { selectURL, setURL } from '../store/imageReducer';
 
 const EditProfileNickNameContainer = styled.div`
+  min-width: 60vw;
   * ::before,
   *,
   * ::after {
@@ -25,6 +26,7 @@ const EditProfileNickNameContainer = styled.div`
       props.mode === 'dark'
         ? props.theme.colors.darkColor
         : props.theme.colors.lightColor};
+    /* min-width: 7rem; */
   }
 
   #headMyProfile {

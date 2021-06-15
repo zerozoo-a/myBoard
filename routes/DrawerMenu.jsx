@@ -4,13 +4,14 @@ import { Menu } from '@styled-icons/entypo/Menu';
 import { useSelector } from 'react-redux';
 import { selectIsOnline } from '../store/userReducer';
 import styled from 'styled-components';
-
 const DrawerContainer = styled.div`
-  margin-bottom: 2rem;
-  .MuiPaper-root,
-  .MuiDrawer-paper {
-    background-color: rgba(0, 0, 0, 0);
-    box-shadow: 0.5rem 0.07rem 0rem rgba(22, 22, 22, 0.28);
+  #drawer {
+    .MuiPaper-root,
+    .MuiDrawer-paper {
+      background-color: rgba(0, 0, 0, 0);
+      box-shadow: 0.5rem 0.07rem 0rem rgba(22, 22, 22, 0.28);
+    }
+    background-color: black;
   }
 `;
 const DrawerBtn = styled.button`
@@ -52,26 +53,24 @@ export default function DrawerMenu({ children }) {
     };
   }, []);
   return (
-    <div>
+    <DrawerContainer>
       {isOnline && (
-        <DrawerContainer>
-          <div>
-            {!drawerPermanent && (
-              <DrawerBtn id='drawerBtn' onClick={toggleDrawer(true)}>
-                <Menu size='30' />
-              </DrawerBtn>
-            )}
-            <Drawer
-              variant={drawerPermanent ? 'permanent' : null}
-              id='drawer'
-              anchor={'left'}
-              open={drawerState}
-              onClose={toggleDrawer(false)}>
-              {children}
-            </Drawer>
-          </div>
-        </DrawerContainer>
+        <div>
+          {!drawerPermanent && (
+            <DrawerBtn id='drawerBtn' onClick={toggleDrawer(true)}>
+              <Menu size='30' />
+            </DrawerBtn>
+          )}
+          <Drawer
+            variant={drawerPermanent ? 'permanent' : null}
+            id='drawer'
+            anchor={'left'}
+            open={drawerState}
+            onClose={toggleDrawer(false)}>
+            {children}
+          </Drawer>
+        </div>
       )}
-    </div>
+    </DrawerContainer>
   );
 }

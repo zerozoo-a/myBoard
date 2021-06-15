@@ -172,7 +172,7 @@ export default function Auth() {
           <form autoComplete='off' onSubmit={onSubmit}>
             <div id='logInSection'>
               <div id='idAndPwdWrapper'>
-                <div class='inputWrapper'>
+                <div className='inputWrapper'>
                   <label name='email'>
                     <Mail size='25' />
                   </label>
@@ -186,7 +186,7 @@ export default function Auth() {
                     required
                   />
                 </div>
-                <div class='inputWrapper'>
+                <div className='inputWrapper'>
                   <label name='password'>
                     <KeyFill size='25' />
                   </label>

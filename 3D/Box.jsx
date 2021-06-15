@@ -2,7 +2,6 @@ import * as THREE from 'three';
 import React, { Suspense, useRef, useMemo } from 'react';
 import { Canvas, useFrame, useLoader } from '@react-three/fiber';
 import { OrbitControls, Stars, useGLTF } from '@react-three/drei';
-import { Physics, usePlane, useSphere } from '@react-three/cannon';
 import styled from 'styled-components';
 import Model from '../Scene.js';
 const MashesContainer = styled.div`
