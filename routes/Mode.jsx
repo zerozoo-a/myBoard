@@ -57,9 +57,6 @@ const circleRightMove = keyframes`
 `;
 const translate = { left: 'translateX(-2.5rem)', right: 'translateX(0.5rem)' };
 const ModeContainer = styled.span`
-  /* position: absolute;
-  left: 10rem;
-  top: 2.625rem; */
   display: flex;
   justify-content: center;
   align-items: center;
@@ -71,6 +68,7 @@ const ModeContainer = styled.span`
   width: 6.5rem;
   height: 3rem;
   border-radius: 3rem;
+  margin-left: 2rem;
 
   #toggler {
     display: flex;

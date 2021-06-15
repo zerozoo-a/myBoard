@@ -6,6 +6,7 @@ import { authService } from '../myBase';
 import { useSelector } from 'react-redux';
 import { selectIsOnline } from '../store/userReducer';
 import { selectMode } from '../store/userReducer';
+import { motion } from 'framer-motion';
 
 const NavStyle = styled.div`
   background-color: ${(props) =>
@@ -30,7 +31,7 @@ const NavStyle = styled.div`
 
     border-radius: 0.5rem;
     list-style: none;
-    margin: 0.5rem;
+    margin: 1.5rem;
     font-size: 1rem;
     text-align: center;
     width: 20rem;
@@ -65,19 +66,34 @@ export default function Nav() {
         <Router>
           <NavStyle mode={mode}>
             <ul>
-              <li>
-                <Link to='/'>Home</Link>
-              </li>
-              <li>
-                <Link to='/Profile'>
-                  {isOnline ? user.displayName : ''}의 정보
-                </Link>
-              </li>
-              <li>
-                <Link to='/About'>About</Link>
-              </li>
+              <motion.div whileHover={{ scale: 1.0 }} whileTap={{ scale: 0.9 }}>
+                <li>
+                  <Link to='/' replace>
+                    Home
+                  </Link>
+                </li>
+              </motion.div>
+
+              <motion.div whileHover={{ scale: 1.0 }} whileTap={{ scale: 0.9 }}>
+                <li>
+                  <Link to='/Profile' replace>
+                    {isOnline ? user.displayName : ''}의 정보
+                  </Link>
+                </li>
+              </motion.div>
+              <motion.div whileHover={{ scale: 1.0 }} whileTap={{ scale: 0.9 }}>
+                <li>
+                  <Link to='/About' replace>
+                    About
+                  </Link>
+                </li>
+              </motion.div>
               <div>
-                <LogOutBtn />
+                <motion.div
+                  whileHover={{ scale: 1.0 }}
+                  whileTap={{ scale: 0.9 }}>
+                  <LogOutBtn />
+                </motion.div>
               </div>
             </ul>
           </NavStyle>

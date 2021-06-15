@@ -1,14 +1,13 @@
 import React, { useState, useEffect, memo } from 'react';
 import { authService, fireDB as db } from '../myBase';
 import DisplayThread from './DisplayThread';
-import UploadImageBtn from './UploadImageBtn';
 import styled from 'styled-components';
-import { useLocation } from 'react-router';
 import { useSelector, useDispatch } from 'react-redux';
 import { selectMode } from '../store/userReducer';
 import { selectURL, setURL } from '../store/imageReducer';
 import SetImageURL from './SetImageURL';
 import ImageModal from './ImageModal';
+import { motion } from 'framer-motion';
 
 const ThreadStyle = styled.div`
   display: grid;
@@ -48,7 +47,7 @@ const ThreadStyle = styled.div`
 const QuackInput = styled.input.attrs(() => ({
   size: '0.6em',
 }))`
-  width: 50vw;
+  width: 45vw;
   height: 4rem;
   font-size: 1em;
   background-color: ${(props) =>
@@ -101,7 +100,6 @@ const Threads = () => {
   const metaCreatedTime = date.getTime();
   const ThreadsTitle = 'Welcome to Quack Quack Board!';
   const alt = 'user uploaded image';
-  let location = useLocation();
   const user = authService.currentUser;
   const dispatch = useDispatch();
 
@@ -147,58 +145,66 @@ const Threads = () => {
   };
 
   return (
-    <ThreadStyle mode={mode}>
-      <h1>HOME</h1>
-      <h4> {ThreadsTitle}</h4>
-      <div id='userInputThread'>
-        <form onSubmit={onSubmit}>
-          <div id='userPhotoAndInputContainer'>
-            <img id='inputUserPhotoURL' src={user.photoURL} />
-            <QuackInput
-              mode={mode}
-              id='QuackInput'
-              onChange={onChange}
-              type='text'
-              placeholder="What's happening?"
-              required
-              value={thread}
-              maxLength='80'
-              name='inputThread'
-            />
-          </div>
-          <div id='uploadImageBtnAndSubmitBtn'>
-            <div>
-              <SetImageURL />
-            </div>
-            <SubmitBtn mode={mode} type='submit' id='submit' name='submit'>
-              등록하기
-            </SubmitBtn>
-            {URL === null ? null : (
-              <img
-                id='normalImage'
-                onClick={imageClickOn}
-                src={URL}
-                alt={alt}
+    <motion.div
+      initial={{ opacity: 0.2 }}
+      animate={{ opacity: 1.0 }}
+      transition={{ duration: 0.4 }}>
+      <ThreadStyle mode={mode}>
+        <h1>HOME</h1>
+        <h4> {ThreadsTitle}</h4>
+        <div id='userInputThread'>
+          <form onSubmit={onSubmit}>
+            <div id='userPhotoAndInputContainer'>
+              <img id='inputUserPhotoURL' src={user.photoURL} />
+              <QuackInput
+                mode={mode}
+                id='QuackInput'
+                onChange={onChange}
+                type='text'
+                placeholder="What's happening?"
+                required
+                value={thread}
+                maxLength='80'
+                name='inputThread'
               />
-            )}
-            {isImageClicked && (
-              <ImageModal URL={URL} setIsImageClicked={setIsImageClicked} />
-            )}
-          </div>
-        </form>
-      </div>
-      <div>
-        {threads.map((thread, i) => (
-          <DisplayThread
-            key={thread.id}
-            thread={thread}
-            isOwner={user.uid === thread.uid}
-            QuackInput={QuackInput}
-            SubmitBtn={SubmitBtn}
-          />
-        ))}
-      </div>
-    </ThreadStyle>
+            </div>
+            <div id='uploadImageBtnAndSubmitBtn'>
+              <div>
+                <SetImageURL />
+              </div>
+              <SubmitBtn mode={mode} type='submit' id='submit' name='submit'>
+                등록하기
+              </SubmitBtn>
+              {URL === null ? null : (
+                <img
+                  id='normalImage'
+                  onClick={imageClickOn}
+                  src={URL}
+                  alt={alt}
+                />
+              )}
+              {isImageClicked && (
+                <ImageModal URL={URL} setIsImageClicked={setIsImageClicked} />
+              )}
+            </div>
+          </form>
+        </div>
+        <motion.div
+          initial={{ x: 100, opacity: 0 }}
+          animate={{ x: 0, opacity: 1 }}
+          transition={{ duration: 0.8 }}>
+          {threads.map((thread, i) => (
+            <DisplayThread
+              key={thread.id}
+              thread={thread}
+              isOwner={user.uid === thread.uid}
+              QuackInput={QuackInput}
+              SubmitBtn={SubmitBtn}
+            />
+          ))}
+        </motion.div>
+      </ThreadStyle>
+    </motion.div>
   );
 };
 export default memo(Threads);

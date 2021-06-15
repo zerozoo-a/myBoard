@@ -41,7 +41,7 @@ const ThreadStyle = styled.div`
     }
   }
   #threadInfo {
-    width: 50vw;
+    width: 45vw;
     margin-left: ${(props) => props.theme.margins.base};
     padding-left: ${(props) => props.theme.margins.base};
     border: 2px solid

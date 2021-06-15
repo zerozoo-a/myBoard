@@ -17,6 +17,7 @@ const AuthContainer = styled.div`
   top: 0;
   width: 30vw;
   height: 100vh;
+  overflow-x: hidden;
   overflow-y: scroll;
   -ms-overflow-style: none; /* for Internet Explorer, Edge */
   scrollbar-width: none; /* for Firefox */
@@ -32,14 +33,14 @@ const AuthContainer = styled.div`
     props.mode === 'dark' ? 'rgba(32,32,32,0.8)' : 'rgba(244,244,244,0.8)'};
   #authIcon {
     cursor: pointer;
+    margin-left: 6.5rem;
+    margin-top: 2.5rem;
   }
   #title {
     color: ${(props) =>
       props.mode === 'dark'
         ? props.theme.colors.lightBlue500
         : props.theme.colors.white};
-    margin-left: 6.5rem;
-    margin-top: 2.5rem;
     font-size: 1.5rem;
   }
 
@@ -72,6 +73,24 @@ const AuthContainer = styled.div`
         : props.theme.colors.lightColor};
     font-family: Monaco;
     font-size: 1.5rem;
+  }
+  @media screen and (max-width: ${(props) => props.theme.deviceSizes.mobileL}) {
+    height: 88vh;
+    #authSection {
+      .inputWrapper {
+        display: flex;
+        align-items: center;
+      }
+      #logInSection {
+        display: flex;
+        flex-direction: row;
+        align-items: center;
+        #logInBtn {
+          min-width: 5rem;
+          height: 6rem;
+        }
+      }
+    }
   }
 `;
 
@@ -149,45 +168,50 @@ export default function Auth() {
           <DuckIcon id='icon' />
           <h3 id='title'>Space Quack Quack</h3>
         </div>
-
         <div id='authSection'>
           <form autoComplete='off' onSubmit={onSubmit}>
-            <label name='email'>
-              <Mail size='25' />
-            </label>
-            <AuthInput
-              mode={mode}
-              onChange={onChange}
-              value={email}
-              type='text'
-              name='email'
-              placeholder='E-mail'
-              required
-            />
-            <div>
-              <label name='password'>
-                <KeyFill size='25' />
-              </label>
-              <AuthInput
-                mode={mode}
-                onChange={onChange}
-                value={password}
-                name='password'
-                type='password'
-                placeholder='password'
-                required
-              />
+            <div id='logInSection'>
+              <div id='idAndPwdWrapper'>
+                <div class='inputWrapper'>
+                  <label name='email'>
+                    <Mail size='25' />
+                  </label>
+                  <AuthInput
+                    mode={mode}
+                    onChange={onChange}
+                    value={email}
+                    type='text'
+                    name='email'
+                    placeholder='E-mail'
+                    required
+                  />
+                </div>
+                <div class='inputWrapper'>
+                  <label name='password'>
+                    <KeyFill size='25' />
+                  </label>
+                  <AuthInput
+                    mode={mode}
+                    onChange={onChange}
+                    value={password}
+                    name='password'
+                    type='password'
+                    placeholder='password'
+                    required
+                  />
+                </div>
+              </div>
+              <Button id='logInBtn' mode={mode} type='submit'>
+                로그인
+              </Button>
             </div>
-            <Button mode={mode} type='submit'>
-              로그인
-            </Button>
           </form>
           <div id='buttons'>
             <SignUp AuthInput={AuthInput} Button={Button} />
             <SnsSignInModal Button={Button} />
           </div>
           <div>
-            <h3 id='authSubHeading'> Happening now </h3>
+            <h3 id='authSubHeading'> drag and Find your space duck! </h3>
             <h5 id='authSubDescription'>Join Space Quack Quack today.</h5>
           </div>
         </div>

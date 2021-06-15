@@ -29,6 +29,7 @@ const margins = {
 };
 
 const interval = {
+  small_0: calcRem(15),
   small: calcRem(25),
   base: calcRem(50),
   basePlus: calcRem(75),

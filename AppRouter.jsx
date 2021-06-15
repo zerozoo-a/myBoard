@@ -1,5 +1,5 @@
 import React from 'react';
-import { HashRouter as BrowserRouter, Route, Switch } from 'react-router-dom';
+import { HashRouter as Router, Route, Switch } from 'react-router-dom';
 import Auth from './routes/Auth';
 import Home from './routes/Home';
 import Profile from './routes/Profile';
@@ -12,7 +12,7 @@ import { useSelector } from 'react-redux';
 const AppRouter = ({ setIsLoggedIn, isLoggedIn }) => {
   let isOnline = useSelector(selectIsOnline);
   return (
-    <BrowserRouter>
+    <Router>
       <Switch>
         {isOnline ? (
           <>
@@ -44,7 +44,7 @@ const AppRouter = ({ setIsLoggedIn, isLoggedIn }) => {
           </>
         )}
       </Switch>
-    </BrowserRouter>
+    </Router>
   );
 };
 export default AppRouter;
