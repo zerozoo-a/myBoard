@@ -28,8 +28,6 @@ const GlobalStyle = createGlobalStyle`
   font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, Oxygen, Ubuntu, Cantarell, 'Open Sans', 'Helvetica Neue', sans-serif;
 }
 body{
-  display:grid;
-  place-items:center;
   background-color:${(props) =>
     props.mode === 'dark'
       ? props.theme.colors.darkBackgroundColor
@@ -39,6 +37,21 @@ body{
         background-color:black;
       }
 }
+@media screen and (min-width: 1642px) {
+#DuckIcon{
+  margin-left:80%;
+
+  
+}
+  }
+@media screen and (max-width:${(props) => props.theme.deviceSizes.mobileL} ) {
+#DuckIcon{
+  margin-top:-20px;
+  margin-left: 60vw;
+ 
+}
+  }
+
 
 `;
 const Menus = styled.div`
@@ -50,27 +63,24 @@ const Menus = styled.div`
   top: 20%;
 
   @media screen and (max-width: ${(props) => props.theme.deviceSizes.tabletL}) {
-    position: fixed;
-    flex-direction: column;
-    top: 25%;
-    left: 0%;
-    #ModeContainer {
-      transform: rotate(90deg);
-      margin-top: 3rem;
-    }
+    top: 7%;
+    left: 25%;
   }
-  @media screen and (max-width: ${(props) => props.theme.deviceSizes.mobileM}) {
+  @media screen and (max-width: ${(props) => props.theme.deviceSizes.mobileL}) {
+    top: 5%;
+    left: 5%;
     flex-direction: row;
     align-items: center;
-    justify-content: center;
-    top: 0%;
-    left: 5%;
+    height: 48px;
     #ModeContainer {
       transform: rotate(0deg);
-      margin-left: 0.5rem;
       margin: 0;
     }
-  } ;
+  }
+  @media screen and (min-width: 1642px) {
+    top: 10%;
+    left: 80%;
+  }
 `;
 
 const App = () => {
@@ -98,11 +108,15 @@ const App = () => {
       <span>
         {isOnline && (
           <div>
-            <Router>
-              <Link to='/' replace>
-                <DuckIcon id='DuckIcon' />
-              </Link>
-            </Router>
+            <div id='DuckIcon'>
+              <Router>
+                <Link to='/' replace>
+                  <div>
+                    <DuckIcon />
+                  </div>
+                </Link>
+              </Router>
+            </div>
             <Menus>
               <DrawerMenu
                 onClick={() => setIsOpen(!isOpen)}

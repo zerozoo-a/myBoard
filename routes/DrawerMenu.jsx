@@ -11,19 +11,16 @@ const DrawerContainer = styled.div`
       background-color: rgba(0, 0, 0, 0);
       box-shadow: 0.5rem 0.07rem 0rem rgba(22, 22, 22, 0.28);
     }
-    background-color: black;
   }
 `;
 const DrawerBtn = styled.button`
   min-width: ${(props) => props.theme.interval.small};
-  /* min-height: ${(props) => props.theme.interval.small}; */
   background-color: ${(props) => props.theme.button.pointColor};
   color: ${(props) => props.theme.button.submitColor};
   border: 2px solid ${(props) => props.theme.button.pointBorder};
   border-radius: 5px;
   cursor: pointer;
   padding: ${(props) => props.theme.button.paddingSmall};
-  /* margin: ${(props) => props.theme.button.marginSmall}; */
   margin: 0;
   font-size: ${(props) => props.theme.button.fontSize};
 `;

@@ -15,6 +15,8 @@ import TableContainer from '@material-ui/core/TableContainer';
 import TableRow from '@material-ui/core/TableRow';
 
 const ProfileContainer = styled.div`
+  display: grid;
+  place-items: center;
   * {
     color: ${(props) =>
       props.mode === 'dark'
@@ -23,17 +25,19 @@ const ProfileContainer = styled.div`
   }
 
   #profileTitleStyle {
-    width: 55vw;
     h1 {
       color: ${(props) => props.theme.colors.pointColor};
       display: grid;
       place-items: center;
+      width: 50vw;
     }
   }
   #profileYourThreads {
     * {
       border: none;
     }
+  }
+  @media screen and (max-width: ${(props) => props.theme.deviceSizes.mobileM}) {
   }
 `;
 const MyThreadStyle = styled.div`

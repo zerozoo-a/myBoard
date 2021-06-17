@@ -11,6 +11,7 @@ import {
 import { selectMode } from '../store/userReducer';
 import { useSelector } from 'react-redux';
 import { motion } from 'framer-motion';
+import Deck from './Deck';
 const AboutContainer = styled.div`
   display: grid;
   place-items: center;
@@ -30,6 +31,7 @@ const AboutContainer = styled.div`
         : props.theme.colors.lightColor};
   }
   #TableContainer {
+    /* width: 40vw; */
     margin: 0 auto;
     margin-bottom: 12rem;
     div,
@@ -55,14 +57,33 @@ export default function About() {
 
   return (
     <AboutContainer mode={mode}>
+      <Deck></Deck>
       <h1>About</h1>
-      <img
+
+      <motion.img
+        initial={{
+          opacity: 0.1,
+          rotateY: 60,
+        }}
+        animate={{
+          opacity: 1,
+          rotateY: 0,
+          transition: { duration: 2 },
+        }}
         alt='윤영주의 미모티콘'
         src='https://user-images.githubusercontent.com/80259925/118583181-9de3d700-b7cf-11eb-814c-ec6afef526b2.jpeg'
       />
       <h2>안녕하세요? </h2>
       <h3>프론트엔드 개발자 지망생 윤영주입니다. </h3>
       <h3>About 페이지에 방문해주셔서 감사합니다.</h3>
+
+      <div>
+        Contact: <a href=' mailto:zerozoo385@gmail.com'>zerozoo385@gmail.com</a>
+      </div>
+      <div>
+        Git Hub:
+        <a href='https://github.com/zerozoo-front/portfolioHome'>Git Hub</a>
+      </div>
 
       <motion.div initial='inactive' animate='active' variants={variants}>
         <TableContainer id='TableContainer'>

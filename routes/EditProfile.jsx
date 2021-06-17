@@ -17,7 +17,6 @@ import { selectMode } from '../store/userReducer';
 import { selectURL, setURL } from '../store/imageReducer';
 
 const EditProfileNickNameContainer = styled.div`
-  min-width: 60vw;
   * ::before,
   *,
   * ::after {
@@ -26,21 +25,12 @@ const EditProfileNickNameContainer = styled.div`
       props.mode === 'dark'
         ? props.theme.colors.darkColor
         : props.theme.colors.lightColor};
-    /* min-width: 7rem; */
   }
 
   #headMyProfile {
     border: none;
   }
-  #inputNickName {
-    height: 2rem;
-    border: 2px solid ${(props) => props.theme.colors.pointColor};
-    border-radius: 4px;
-    margin-right: 1rem;
-  }
   #bodyRow * {
-    width: 30%;
-    min-width: 30%;
     color: ${(props) =>
       props.mode === 'dark'
         ? props.theme.colors.darkColor
@@ -53,7 +43,7 @@ const EditProfileNickNameContainer = styled.div`
           ? props.theme.colors.darkBorderColor
           : props.theme.colors.lightBorderColor};
   }
-  #editNickName {
+  #editNickNameWrapper {
     border-bottom: 1px solid
       ${(props) =>
         props.mode === 'dark'
@@ -62,9 +52,12 @@ const EditProfileNickNameContainer = styled.div`
 
     #nickNameInputSet {
       white-space: nowrap;
-      min-width: 15rem;
       #inputNickName {
-        min-width: 20vw;
+        height: 2rem;
+        border: 2px solid ${(props) => props.theme.colors.pointColor};
+        border-radius: 4px;
+        margin-right: 1rem;
+        width: 30vw;
       }
     }
   }
@@ -148,7 +141,7 @@ const EditProfileNickName = React.memo(function EditProfileNickNameFnc() {
               <TableCell id='myNickName' key={user.displayName}>
                 내 별명: <b>{user.displayName}</b>
               </TableCell>
-              <TableCell id='editNickName'>
+              <TableCell id='editNickNameWrapper'>
                 <form onSubmit={onSubmit}>
                   <div id='nickNameInputSet'>
                     <input
